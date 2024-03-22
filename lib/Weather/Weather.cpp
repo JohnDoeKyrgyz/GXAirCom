@@ -7,16 +7,16 @@ volatile uint32_t actPulseCount = 0;
 volatile uint8_t timerIrq = 0;
 volatile unsigned long ContactBounceTime; // Timer to avoid contact bounce in isr
 
-hw_timer_t * timer = NULL;
+hw_timer_t * timer = nullptr;
 
-void IRAM_ATTR windspeedhandler(void){
-  if((millis() - ContactBounceTime) > 15 ) { // debounce the switch contact.
+void IRAM_ATTR windspeedhandler(){
+  if(millis() - ContactBounceTime > 15 ) { // debounce the switch contact.
     aneometerpulsecount++;
     ContactBounceTime = millis();
   }
 }
 
-void IRAM_ATTR rainhandler(void){
+void IRAM_ATTR rainhandler(){
   uint32_t tAct = millis();
   if((tAct - rainDebounceTime) > 2000uL ) { // debounce the switch contact.
     rainCount++;
@@ -45,7 +45,7 @@ bool Weather::checkI2Caddr(uint8_t i2cAddr) {
   return (error == 0);
 }
 
-bool Weather::initBME280(void){
+bool Weather::initBME280(){
   uint8_t sensorAdr = 0x76;
   bool ret = false;
   for (sensorAdr = 0x76; sensorAdr <= 0x77; sensorAdr++)
@@ -167,7 +167,7 @@ float Weather::calcPressure(float p, float t, float h){
 
 }
 
-void Weather::resetWindGust(void){
+void Weather::resetWindGust(){
   windgust = 0; //reset windgust
 }
 
@@ -186,11 +186,11 @@ void Weather::setWindDirOffset(int16_t winddirOffset){
   _winddirOffset = winddirOffset;
 }
 
-float Weather::calcWindspeed(void){
+float Weather::calcWindspeed(){
   return (float)_actPulseCount * 1.609;
 }
 
-void Weather::checkAneometer(void){
+void Weather::checkAneometer(){
   if (_weather.bWindDir){
     VaneValue = analogRead(_windDirPin);
     _weather.vaneValue = VaneValue;
@@ -239,7 +239,7 @@ float Weather::calcAdsMeasurement(float measurement, float minVoltage, float max
   return (minRange + (rangePart * (measurementMV - minVoltageMV))); 
 }
 
-void Weather::checkRainSensor(void){
+void Weather::checkRainSensor(){
   time_t now;
   std::time(&now);
   //log_i("%04d-%02d-%02d %02d:%02d:%02d",year(now),month(now),day(now),hour(now),minute(now),second(now));
@@ -260,7 +260,7 @@ void Weather::checkRainSensor(void){
   //log_i("count= %d rain1h=%.1f %d rain1d=%.1f %d",rainCount, _weather.rain1h,rainTipCount1h,_weather.rain1d,rainTipCount1d);
 }
 
-void Weather::run(void){
+void Weather::run(){
   uint32_t tAct = millis();
   static uint32_t tOld = millis();
 	float temp = 0;
@@ -276,7 +276,7 @@ void Weather::run(void){
       for (i = 0;i < 5;i++){
         bmeRet = bme.readADCValues();
         if (bmeRet == 0){
-          _weather.temp = ((float)bme.getTemp() / 100.) + _tempOffset; // in °C
+          _weather.temp = (float)bme.getTemp() / 100. + _tempOffset; // in °C
           _weather.bTemp = true;
           rawPressure = (float)bme.getPressure() / 100.;
           _weather.bHumidity = true;
@@ -313,7 +313,7 @@ void Weather::run(void){
         log_e("error reading oneWire");
       }
     }
-    if (aneometerType == eAnemometer::SPARKFUN_WEATHERKIT) {
+    if (aneometerType == SPARKFUN_WEATHERKIT) {
         _weather.WindSpeed = _sparkFunWeatherMeter->getWindSpeed();
         _weather.WindDir = _sparkFunWeatherMeter->getWindDirection();
         if(_weather.WindSpeed > windgust) {
