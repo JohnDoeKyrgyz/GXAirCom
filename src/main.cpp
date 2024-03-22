@@ -425,31 +425,28 @@ double round2(double value) {
 }
 
 void i2cScanner(){
-  byte error, address;
-  int nDevices;
-
   log_i("Scanning...");
 
-  nDevices = 0;
-  for(address = 1; address < 127; address++ )
+  int devices = 0;
+  for(byte address = 1; address < 127; address++ )
   {
     // The i2c_scanner uses the return value of
     // the Write.endTransmisstion to see if
     // a device did acknowledge to the address.
     pI2cOne->beginTransmission(address);
-    error = pI2cOne->endTransmission();
+    byte error = pI2cOne->endTransmission();
 
     if (error == 0)
     {
       log_i("I2C device found at address 0x%02X !",address);
-      nDevices++;
+      devices++;
     }
     else if (error==4)
     {
       log_i("Unknown error at address 0x%02X !",address);
     }
   }
-  if (nDevices == 0)
+  if (devices == 0)
     log_i("No I2C devices found");
   else
     log_i("done");
