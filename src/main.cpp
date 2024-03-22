@@ -358,7 +358,7 @@ void taskBluetooth(void *pvParameters);
 #endif
 void taskMemory(void *pvParameters);
 void setupWifi();
-void IRAM_ATTR ppsHandler(void);
+void IRAM_ATTR ppsHandler();
 void printSettings();
 void listSpiffsFiles();
 String setStringSize(String s,uint8_t sLen);
@@ -384,7 +384,7 @@ void checkSystemCmd(const char *ch_str);
 size_t getNextString(char *ch_str,char *pSearch,char *buffer, size_t sizeBuffer);
 void setWifi(bool on);
 void handleUpdate(uint32_t tAct);
-void printChipInfo(void);
+void printChipInfo();
 void setAllTime(tm &timeinfo);
 void checkExtPowerOff(uint32_t tAct);
 void writePGXCFSentence();
@@ -422,34 +422,6 @@ uint8_t setCFG[3][8] PROGMEM = {
 // example: round(3.14159) -> 3.14
 double round2(double value) {
    return (int)(value * 100 + 0.5) / 100.0;
-}
-
-void i2cScanner(){
-  log_i("Scanning...");
-
-  int devices = 0;
-  for(byte address = 1; address < 127; address++ )
-  {
-    // The i2c_scanner uses the return value of
-    // the Write.endTransmisstion to see if
-    // a device did acknowledge to the address.
-    pI2cOne->beginTransmission(address);
-    byte error = pI2cOne->endTransmission();
-
-    if (error == 0)
-    {
-      log_i("I2C device found at address 0x%02X !",address);
-      devices++;
-    }
-    else if (error==4)
-    {
-      log_i("Unknown error at address 0x%02X !",address);
-    }
-  }
-  if (devices == 0)
-    log_i("No I2C devices found");
-  else
-    log_i("done");
 }
 
 #ifdef GSMODULE
@@ -532,7 +504,6 @@ void readFuelSensor(uint32_t tAct){
     pos = flarmDataPort.addChecksum(sOut,MAXSTRING);
     sendData2Client(sOut,pos);
   }
-  
 }
 
 
@@ -1305,7 +1276,7 @@ void setupPMU(){
   }
 }
 
-void IRAM_ATTR ppsHandler(void){
+void IRAM_ATTR ppsHandler(){
   gtPPS = millis();
   ppsTriggered = true;
 }
@@ -3427,35 +3398,33 @@ bool printBattVoltage(uint32_t tAct){
 }
 
 void setWifi(bool on){
-  if ((on) && (!status.bWifiOn)){
+  if (on && !status.bWifiOn){
     log_i("switch WIFI ON");
-    if (setting.CPUFrequency <  80){ //set to min. 80Mhz, because of Wifi
-      setCpuFrequencyMhz(uint32_t(80));
-    }else{
-      setCpuFrequencyMhz(uint32_t(setting.CPUFrequency));
+    int desiredCpuFrequency = max(static_cast<uint8_t>(80), setting.CPUFrequency);
+    if (getCpuFrequencyMhz() != desiredCpuFrequency) {
+      setCpuFrequencyMhz(desiredCpuFrequency);
+      log_i("set CPU-Speed to %dMHz",getCpuFrequencyMhz());
     }
-    log_i("set CPU-Speed to %dMHz",getCpuFrequencyMhz());
     delay(10); //wait 10ms
     WiFi.disconnect(true,true);
     WiFi.mode(WIFI_MODE_NULL);
     WiFi.persistent(false);
-    WiFi.config(IPADDR_ANY, IPADDR_ANY, IPADDR_ANY,IPADDR_ANY,IPADDR_ANY); // call is only a workaround for bug in WiFi class
+    // WiFi.config(IPADDR_ANY, IPADDR_ANY, IPADDR_ANY,IPADDR_ANY,IPADDR_ANY); // call is only a workaround for bug in WiFi class
     WiFi.setHostname(host_name.c_str());      
 
     //now configure access-point
     //so we have wifi connect and access-point at same time
     //we connecto to wifi
-    if (setting.wifi.connect != eWifiMode::CONNECT_NONE){
+    if (setting.wifi.connect != CONNECT_NONE){
       //esp_wifi_set_auto_connect(true);
       log_i("Try to connect to WiFi ");
-      WiFi.status();
       if (setting.wifi.uMode.bits.switchOffApWhenStaConnected){
         WiFi.mode(WIFI_MODE_STA);
       }else{
         WiFi.mode(WIFI_MODE_APSTA);
         setupSoftAp();
       }    
-      if ((WiFi.SSID() != setting.wifi.ssid || WiFi.psk() != setting.wifi.password)){
+      if (WiFi.SSID() != setting.wifi.ssid || WiFi.psk() != setting.wifi.password){
         // ... Try to connect to WiFi station.
         WiFi.begin(setting.wifi.ssid.c_str(), setting.wifi.password.c_str());
       } else {
@@ -3483,8 +3452,8 @@ void setWifi(bool on){
     }
     log_i("hostname=%s",host_name.c_str());  
     log_i("my APIP=%s",local_IP.toString().c_str());
-    if((WiFi.getMode() & WIFI_MODE_STA)){
-      if (setting.outputMode != eOutput::oBLE){
+    if(WiFi.getMode() & WIFI_MODE_STA){
+      if (setting.outputMode == oUDP){
         WiFi.setSleep(false); //disable power-save-mode !! will increase ping-time
         WiFi.setTxPower(WIFI_POWER_19_5dBm); //maximum wifi-power
       }
@@ -3492,7 +3461,7 @@ void setWifi(bool on){
     status.bWifiOn = true; 
     Web_setup(); 
   }
-  if ((!on) && (status.bWifiOn)){
+  if (!on && status.bWifiOn){
     log_i("switch WIFI OFF");
     setting.wifi.tWifiStop=0;
     Web_stop();
@@ -3501,14 +3470,6 @@ void setWifi(bool on){
     WiFi.mode(WIFI_MODE_NULL);
     status.bWifiOn = false;
     
-  }
-  if (!status.bWifiOn){
-    if ((setting.outputMode == eOutput::oBLE) && (setting.CPUFrequency <  80)){ //output over ble-connection and frequency < 80Mhz --> set to 80Mhz min.
-      setCpuFrequencyMhz(uint32_t(80)); //minimum 80Mhz if bluetooth-output is on
-    }else{
-      setCpuFrequencyMhz(uint32_t(setting.CPUFrequency));
-    }
-    log_i("set CPU-Speed to %dMHz",getCpuFrequencyMhz());    
   }
   wifiCMD = 0;
 }
