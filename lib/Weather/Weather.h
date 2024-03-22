@@ -18,10 +18,8 @@
 #include <DallasTemperature.h>
 #include <TimeLib.h>
 #include <ctime>
-#include "Tx20.h"
 #include "main.h"
 #include <ADS1X15.h>
-#include <PeetBros.h>
 #include <SparkFun_Weather_Meter_Kit_Arduino_Library.h>
 
 #define DEG2RAD M_PI / 180.0
