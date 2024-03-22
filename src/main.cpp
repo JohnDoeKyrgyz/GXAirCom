@@ -1300,9 +1300,10 @@ void WiFiEvent(WiFiEvent_t event){
       status.wifiSTA.state = CONNECTED;
       break;
     case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
-      log_i("station lost connection to AP");   
+      log_i("station lost connection to AP. Reconnecting");
       status.wifiSTA.state = DISCONNECTED;
       status.wifiSTA.ip = "";
+      setWifi(true);
       break; 
     case ARDUINO_EVENT_WIFI_STA_GOT_IP:
       status.wifiSTA.state = FULL_CONNECTED;
@@ -5236,9 +5237,9 @@ void taskBackGround(void *pvParameters){
     }
     */ 
     #ifdef GSMODULE  
-    if (setting.Mode == eMode::GROUND_STATION){
+    if (setting.Mode == GROUND_STATION){
       if (status.bTimeOk == true){
-        struct tm now;
+        tm now;
         getLocalTime(&now,0);
         if ((now.tm_mday != actDay) && (now.tm_hour > 0)){
           //restart every new day --> to get new NTP-Time
@@ -5253,7 +5254,7 @@ void taskBackGround(void *pvParameters){
           actDay = day();
         }
       }
-      if (setting.gs.PowerSave == eGsPower::GS_POWER_SAFE){
+      if (setting.gs.PowerSave == GS_POWER_SAFE){
         if (timeOver(tAct,tRuntime,180000)) bPowersaveOk = true; //after 3min. esp is allowed to go to sleep, so that anybody has a chance to change settings
         //bPowersaveOk = true; //after 3min. esp is allowed to go to sleep, so that anybody has a chance to change settings
         if (status.bTimeOk == true){
@@ -5289,7 +5290,7 @@ void taskBackGround(void *pvParameters){
       }
     }
     #endif
-    if ((status.wifiSTA.state == FULL_CONNECTED) || (status.modemstatus == eConnectionState::CONNECTED)){
+    if (status.wifiSTA.state == FULL_CONNECTED || status.modemstatus == CONNECTED){
       status.bInternetConnected = true;
     }else{
       status.bInternetConnected = false;
@@ -5307,7 +5308,7 @@ void taskBackGround(void *pvParameters){
         uint32_t tBeforeNtp = now();
         configTime(0, 0, "pool.ntp.org");
         adjustTime(0);
-        struct tm timeinfo;
+        tm timeinfo;
         if(getLocalTime(&timeinfo)){
           uint32_t tEnd = millis();
           log_i("h=%d,min=%d,sec=%d,day=%d,month=%d,year=%d",timeinfo.tm_hour,timeinfo.tm_min, timeinfo.tm_sec, timeinfo.tm_mday,timeinfo.tm_mon+1, timeinfo.tm_year + 1900);
@@ -5378,7 +5379,7 @@ void taskBackGround(void *pvParameters){
     }
     if (timeOver(tAct,tWifiCheck,WIFI_RECONNECT_TIME)){
       tWifiCheck = tAct;
-      if ((setting.wifi.connect == eWifiMode::CONNECT_ALWAYS) && (status.bWifiOn)){
+      if (setting.wifi.connect == CONNECT_ALWAYS && status.bWifiOn){
         //log_i("check Wifi-status %d ",status.wifiSTA.state);
         if (status.wifiSTA.state != FULL_CONNECTED){
           log_i("WiFi not connected. Try to reconnect");
@@ -5393,8 +5394,7 @@ void taskBackGround(void *pvParameters){
           }else{
             WiFi.mode(WIFI_MODE_APSTA);
           }
-          WiFi.begin(setting.wifi.ssid.c_str(), setting.wifi.password.c_str()); 
-          
+          WiFi.begin(setting.wifi.ssid.c_str(), setting.wifi.password.c_str());
         }
       }
     }
@@ -5429,7 +5429,7 @@ void taskBackGround(void *pvParameters){
       powerOff(); //power off, when battery is empty !!
     }
     //if ((status.battery.percent < setting.minBattPercent) && (status.battery.voltage >= BATTPINOK)) { // if Batt-voltage is below 1V, maybe the resistor is missing.
-    if ((setting.gs.PowerSave == eGsPower::GS_POWER_BATT_LIFE) || (setting.gs.PowerSave == eGsPower::GS_POWER_SAFE)){
+    if ((setting.gs.PowerSave == GS_POWER_BATT_LIFE) || (setting.gs.PowerSave == GS_POWER_SAFE)){
       if ((status.battery.percent <= setting.minBattPercent) && (status.battery.voltage >= BATTPINOK)){
         if (timeOver(tAct,tBattEmpty,60000)){ //min 60sek. below
           log_i("Batt empty voltage=%d.%dV",status.battery.voltage/1000,status.battery.voltage%1000);
@@ -5441,7 +5441,7 @@ void taskBackGround(void *pvParameters){
         tBattEmpty = millis();
       }
     }else{
-      if (status.PMU != ePMU::NOPMU){ //power off only if we have an AXP192, otherwise, we can't switch on again.
+      if (status.PMU != NOPMU){ //power off only if we have an AXP192, otherwise, we can't switch on again.
         if ((status.battery.voltage < battEmpty) && (status.battery.voltage >= BATTPINOK)) { // if Batt-voltage is below 1V, maybe the resistor is missing.
           if (timeOver(tAct,tBattEmpty,60000)){ //min 60sek. below
             log_i("Batt empty voltage=%d.%dV",status.battery.voltage/1000,status.battery.voltage%1000);
