@@ -1300,10 +1300,9 @@ void WiFiEvent(WiFiEvent_t event){
       status.wifiSTA.state = CONNECTED;
       break;
     case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
-      log_i("station lost connection to AP. Reconnecting");
+      log_i("station lost connection to AP.");
       status.wifiSTA.state = DISCONNECTED;
       status.wifiSTA.ip = "";
-      setWifi(true);
       break; 
     case ARDUINO_EVENT_WIFI_STA_GOT_IP:
       status.wifiSTA.state = FULL_CONNECTED;
@@ -1312,7 +1311,9 @@ void WiFiEvent(WiFiEvent_t event){
       break;
     case ARDUINO_EVENT_WIFI_STA_LOST_IP:
       status.wifiSTA.ip = "";            
-      log_i("STA LOST IP");
+      log_i("STA LOST IP. Reconnect...");
+      status.bWifiOn = false;
+      setWifi(true);
       break;
     case ARDUINO_EVENT_WIFI_AP_START:
       status.wifiAP.state = STARTED;
