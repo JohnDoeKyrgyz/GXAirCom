@@ -1096,12 +1096,12 @@ void sendAWUdp(String msg){
   }      
 }
 
-void sendData2Client(char *buffer,int iLen){
+void sendData2Client(char *buffer, int iLen){
   //log_i("endChar=%02X;len=%d",buffer[iLen],iLen);
   //size_t bufLen = strlen(buffer);
   if (setting.outputMode == eOutput::oUDP){
     //output via udp
-    if ((WiFi.status() == WL_CONNECTED) || (WiFi.softAPgetStationNum() > 0)){ //connected to wifi or a client is connected to me
+    if (WiFi.status() == WL_CONNECTED || WiFi.softAPgetStationNum() > 0){ //connected to wifi or a client is connected to me
       //log_i("sending udp");
       
       WiFiUDP udp;
@@ -1465,7 +1465,6 @@ void printSettings(){
   log_i("Fanet-Pin=%d",setting.fanetpin);
   log_i("external power switch=%d",setting.bHasExtPowerSw);
 
-
   log_i("Serial-output=%d",setting.bOutputSerial);
   log_i("OUTPUT Vario=%d",setting.outputModeVario);
   log_i("OUTPUT FLARM=%d",setting.outputFLARM);
@@ -1531,7 +1530,7 @@ void printSettings(){
   log_i("WIUlID=%s",setting.WindyUpload.ID.c_str());
   log_i("WIUlKEY=%s",setting.WindyUpload.KEY.c_str());
 
-  // mqttt
+  // mqtt
   log_i("MqttMode=%d",setting.mqtt.mode.mode );
   log_i("MqttServer=%s",setting.mqtt.server.c_str());
   log_i("MqttPort=%d",setting.mqtt.port);
@@ -1545,7 +1544,6 @@ void printSettings(){
   #endif
 
   log_i("fuel-sensor=%d",setting.bHasFuelSensor);
-
 }
 
 void listSpiffsFiles(){
@@ -1662,9 +1660,7 @@ void testLegacy(){
 void writePGXCFSentence() {
   char buffer[MAXSTRING];
   // $PGXCF,<version>,<Output Serial>,<eMode>,<eOutputVario>,<output Fanet>,<output GPS>,<output FLARM>,<customGPSConfig>,<Aircraft Type>,<Address>,<Pilot Name>
-  int8_t version = 1;
-  snprintf(buffer, MAXSTRING, "$PGXCF,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%s",
-    version,
+  snprintf(buffer, MAXSTRING, "$PGXCF,1,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%s",
     setting.outputMode,
     setting.Mode, setting.outputModeVario,
     setting.outputFANET, setting.outputGPS, setting.outputFLARM,
