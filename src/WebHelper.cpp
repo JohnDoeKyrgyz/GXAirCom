@@ -1491,25 +1491,25 @@ void sendPage(uint8_t pageNr){
   
 }
 
-void Web_loop(void){  
+void Web_loop(){
   static uint32_t tLife = millis();
   static uint32_t tRestart = millis();
-  uint32_t tAct = millis();
+  const uint32_t tAct = millis();
   // Look for and handle WebSocket data
   webSocket.loop();
 
-  if ((tAct - tLife) >= 100){
+  if (tAct - tLife >= 100){
     tLife = tAct;
     //site update
-    for (int i = 0;i <MAXCLIENTS;i++){
-      if (clientPages[i] > 0){
-        sendPage(clientPages[i]);
+    for (unsigned char clientPage : clientPages){
+      if (clientPage > 0){
+        sendPage(clientPage);
         break;
       }
     }
   }
   if (restartNow){
-    if ((tAct - tRestart) >= 1000){
+    if (tAct - tRestart >= 1000){
       ESP.restart();
     }    
   }else{
