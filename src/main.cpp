@@ -5212,7 +5212,7 @@ void taskBackGround(void *pvParameters){
 
   tBattEmpty = millis();
   tGetTime = millis() - GETNTPINTERVALL + 5000; //we refresh NTP-Time 5 sec. after internet is connected
-  while (1){
+  while (true){
     uint32_t tAct = millis();
     if  (status.wifiSTA.state != IDLE){
       Web_loop();
