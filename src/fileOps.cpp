@@ -4,7 +4,7 @@ Preferences preferences;
 
 void load_configFile(SettingsData* pSetting){
   log_i("LOAD CONFIG FILE");
-  preferences.begin("settings", false);                         //Ordner settings anlegen/verwenden
+  preferences.begin("settings", false);
   pSetting->settingsView = preferences.getUChar("setView",0); //
   pSetting->wifi.appw = preferences.getString("APPW","12345678");
   pSetting->boardType = eBoard(preferences.getUChar("BOARDTYPE",eBoard::UNKNOWN)); //
