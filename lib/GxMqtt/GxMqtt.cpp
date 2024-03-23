@@ -1,7 +1,7 @@
 #include <GxMqtt.h>
 
-extern struct SettingsData setting;
-extern struct statusData status;
+extern SettingsData setting;
+extern statusData status;
 
 GxMqtt::GxMqtt(){
   xMutex = NULL;
@@ -260,8 +260,8 @@ void GxMqtt::run(bool bNetworkOk){
   if (bNetworkOk){
     //log_i("client connected");
     //log_i("take mutex");
-    if (xSemaphoreTake( *xMutex, ( TickType_t ) 500 ) == pdTRUE ){
-      if ((tAct - tOld) >= 5000){
+    if (xSemaphoreTake( *xMutex, 500 ) == pdTRUE ){
+      if (tAct - tOld >= 5000){
         if (!pPubSubClient->connected()){
           connect(); //we try to connect
           tOld = millis();
@@ -284,13 +284,13 @@ void GxMqtt::run(bool bNetworkOk){
     //tRestartModem = tAct;
     status.MqttStat = 0;
   }
-  if ((tAct - tRestartModem) >= 600000){ //10min. no MQTT-connection, maybe no network-connection
+  if (tAct - tRestartModem >= MQTT_RESET_TIME){ //10min. no MQTT-connection, maybe no network-connection
     log_e("no MQTT-connection after 10min --> restart");
     restartNow = true; //we have not MQTT-connection --> restart ESP, because we need to reconnect wifi or modem
     tRestartModem = tAct;
   }  
   if (restartNow){
-    if ((tAct - tRestart) >= 3000){
+    if (tAct - tRestart >= 3000){
       ESP.restart();
     }    
   }else{
@@ -298,5 +298,5 @@ void GxMqtt::run(bool bNetworkOk){
   }
 }
 
-void GxMqtt::end(void){
+void GxMqtt::end(){
 }

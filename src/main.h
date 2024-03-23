@@ -1,10 +1,7 @@
-#include <string.h>
-#include "enums.h"
-//#include "../lib/FANETLORA/FanetLora.h"
-
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include "enums.h"
 #define MAXSTRING 255
 #define MAXSIZEBLE 256 // same as local mtu
 
@@ -195,7 +192,8 @@ SCL 14
 #define MIN_FLIGHT_TIME 5000
 #define MIN_GROUND_TIME 60000
 
-#define WIFI_RECONNECT_TIME 600000 //10min.
+#define WIFI_RECONNECT_TIME 300000 //5min.
+#define MQTT_RESET_TIME 600000
 
 #define NUMBUTTONS 2
 //#define BUTTON2 38
