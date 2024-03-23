@@ -5420,7 +5420,7 @@ void taskBackGround(void *pvParameters){
 
     if (wifiCMD == 11) setWifi(true); //switch wifi on
     if (wifiCMD == 10) setWifi(false); //switch wifi off
-    if (( tAct > (setting.wifi.tWifiStop * 1000)) && (setting.wifi.tWifiStop!=0) && (!WebUpdateRunning)){
+    if (tAct > setting.wifi.tWifiStop * 1000 && setting.wifi.tWifiStop != 0 && !WebUpdateRunning){
       log_i("******************WEBCONFIG Setting - WIFI STOPPING*************************");
       log_i("currHeap:%d,minHeap:%d", xPortGetFreeHeapSize(), xPortGetMinimumEverFreeHeapSize());
       setWifi(false);
