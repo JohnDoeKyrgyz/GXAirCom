@@ -162,11 +162,7 @@ SCL 22
 
 ******** BARO *********
 SDA 13
-SCL 14 
-
-
-
-
+SCL 14
 */
 
 #define APPNAME "GXAirCom"
@@ -226,334 +222,327 @@ SCL 14
 
 #define GETNTPINTERVALL 1800000 //refresh timer from NTP every 30min.
 
-struct weatherupload{
-  bool enable;
-  String ID;
-  String KEY;
+struct weatherupload {
+    bool enable;
+    String ID;
+    String KEY;
 };
 
-struct Fanetweatherupload{
-  uint32_t FanetId = 0;
-  String ID;
-  String KEY;
+struct Fanetweatherupload {
+    uint32_t FanetId = 0;
+    String ID;
+    String KEY;
 };
 
-struct weatherAvg{
-  float Winddir;
-  float sinWinddir;
-  float cosWinddir;
-  float WindSpeed; //[km/h]
-  float WindGust; //[km/h]
-  float Pressure; // [hPa]
-  float Humidity; // [%rH]
-  float temp; //temp [°C]
+struct weatherAvg {
+    float Winddir;
+    float sinWinddir;
+    float cosWinddir;
+    float WindSpeed; //[km/h]
+    float WindGust; //[km/h]
+    float Pressure; // [hPa]
+    float Humidity; // [%rH]
+    float temp; //temp [°C]
 };
 
-struct VarioSettings{
-  float sinkingThreshold;
-  float climbingThreshold;
-  float nearClimbingSensitivity;
-  uint8_t volume;
-  bool BeepOnlyWhenFlying;
-  bool useMPU;
-  int16_t accel[3];
-  int16_t gyro[3];
-  float tValues[2];
-  float zValues[2];    
-  float tempOffset;
-  float sigmaP;
-  float sigmaA;
+struct VarioSettings {
+    float sinkingThreshold;
+    float climbingThreshold;
+    float nearClimbingSensitivity;
+    uint8_t volume;
+    bool BeepOnlyWhenFlying;
+    bool useMPU;
+    int16_t accel[3];
+    int16_t gyro[3];
+    float tValues[2];
+    float zValues[2];
+    float tempOffset;
+    float sigmaP;
+    float sigmaA;
 };
 
-	struct MqttModeBits
-	{
-			unsigned enable:1, sendWeather:1, b2:1, b3:1, b4:1, b5:1, b6:1, b7:1;
-	};
+struct MqttModeBits {
+    unsigned enable: 1, sendWeather: 1, b2: 1, b3: 1, b4: 1, b5: 1, b6: 1, b7: 1;
+};
 
-  	union uMqttMode
-	{
-			MqttModeBits bits;
-			uint8_t mode;
-	};
+union uMqttMode {
+    MqttModeBits bits;
+    uint8_t mode;
+};
 
-	struct WeatherStationModeBits
-	{
-			unsigned enable:1, hasBME:1, rainSensor:1, b3:1, b4:1, b5:1, b6:1, b7:1;
-	};
+struct WeatherStationModeBits {
+    unsigned enable: 1, hasBME: 1, rainSensor: 1, b3: 1, b4: 1, b5: 1, b6: 1, b7: 1;
+};
 
-  	union uWeatherStationMode
-	{
-			WeatherStationModeBits bits;
-			uint8_t mode;
-	};
+union uWeatherStationMode {
+    WeatherStationModeBits bits;
+    uint8_t mode;
+};
 
 struct AnemometerSettings {
-  eAnemometer AnemometerType; //Anemometer
-  uint8_t AnemometerAdsGain;
-  float AnemometerAdsWSpeedMinVoltage;
-  float AnemometerAdsWSpeedMaxVoltage;
-  float AnemometerAdsWDirMinVoltage;
-  float AnemometerAdsWDirMaxVoltage;
-  float AnemometerAdsWSpeedMinSpeed;
-  float AnemometerAdsWSpeedMaxSpeed;
-  float AnemometerAdsWDirMinDir;
-  float AnemometerAdsWDirMaxDir;
-  float AnemometerAdsVDivR1;
-  float AnemometerAdsVDivR2;
+    eAnemometer AnemometerType; //Anemometer
+    uint8_t AnemometerAdsGain;
+    float AnemometerAdsWSpeedMinVoltage;
+    float AnemometerAdsWSpeedMaxVoltage;
+    float AnemometerAdsWDirMinVoltage;
+    float AnemometerAdsWDirMaxVoltage;
+    float AnemometerAdsWSpeedMinSpeed;
+    float AnemometerAdsWSpeedMaxSpeed;
+    float AnemometerAdsWDirMinDir;
+    float AnemometerAdsWDirMaxDir;
+    float AnemometerAdsVDivR1;
+    float AnemometerAdsVDivR2;
 };
 
-struct MqttSettings{
-  uMqttMode mode;
-  String server = "";
-  uint16_t port;
-  String pw = "";
+struct MqttSettings {
+    uMqttMode mode;
+    String server = "";
+    uint16_t port;
+    String pw = "";
 };
 
-struct statusVario{
-  bool bHasVario;
-  bool bHasMPU;
-  int16_t accel[3];
-  int16_t gyro[3];
-  float acc_Z;
-  float pressure = NAN;
-  float alt;
-  float temp = NAN;
-  float Heading;
-  float ClimbRate;
+struct statusVario {
+    bool bHasVario;
+    bool bHasMPU;
+    int16_t accel[3];
+    int16_t gyro[3];
+    float acc_Z;
+    float pressure = NAN;
+    float alt;
+    float temp = NAN;
+    float Heading;
+    float ClimbRate;
 };
 
-struct GSSettings{
-  float lat; //Ground-Station Latitude
-  float lon; //Ground-Station Longitude
-  float alt; //Ground-Station altitude
-  float geoidAlt; //geoidaltitude for Legacy
-  eScreenOption SreenOption; //energy-option for display
-  eGsPower PowerSave; //powersave-option
-  int sunriseOffset; //sunrise offset [min]
-  int sunsetOffset; //sunrise offset [min]
+struct GSSettings {
+    float lat; //Ground-Station Latitude
+    float lon; //Ground-Station Longitude
+    float alt; //Ground-Station altitude
+    float geoidAlt; //geoidaltitude for Legacy
+    eScreenOption SreenOption; //energy-option for display
+    eGsPower PowerSave; //powersave-option
+    int sunriseOffset; //sunrise offset [min]
+    int sunsetOffset; //sunrise offset [min]
 };
 
-struct WeatherSettings{
-  
-  uWeatherStationMode mode;
-  AnemometerSettings anemometer;
-  float tempOffset;
-  int16_t windDirOffset;
-  uint8_t sendFanet;  
-  float avgFactorFanet;
-  uint32_t FanetUploadInterval;
-  float avgFactorWU;
-  uint32_t WUUploadIntervall;
+struct WeatherSettings {
+    uWeatherStationMode mode;
+    AnemometerSettings anemometer;
+    float tempOffset;
+    int16_t windDirOffset;
+    uint8_t sendFanet;
+    float avgFactorFanet;
+    uint32_t FanetUploadInterval;
+    float avgFactorWU;
+    uint32_t WUUploadIntervall;
 };
 
-struct GsmSettings{
-  String apn;
-  String user;
-  String pwd;
-  eGsmNetworkMode NetworkMode;
-  eGsmPreferedMode PreferredMode;
-  String NB_IOT_Band;
-  String CAT_M_Band;
+struct GsmSettings {
+    String apn;
+    String user;
+    String pwd;
+    eGsmNetworkMode NetworkMode;
+    eGsmPreferedMode PreferredMode;
+    String NB_IOT_Band;
+    String CAT_M_Band;
 };
 
-	struct WifiModeBits
-	{
-			unsigned switchOffApWhenStaConnected:1, disableWifiAtStartup:1, b2:1, b3:1, b4:1, b5:1, b6:1, b7:1;
-	};
-	union uWifiMode
-	{
-			WifiModeBits bits;
-			uint8_t mode;
-	};
-
-struct WifiSettings{
-  String appw; //access-point-Password
-  String ssid; //WIFI SSID
-  String password; //WIFI PASSWORD
-  eWifiMode connect; //1 connect to wifi, 2 connect to wifi and try to stay connected
-  uint32_t tWifiStop; //time after wifi will be stopped to save energy 0 --> never
-  uWifiMode uMode; //wifi-mode
+struct WifiModeBits {
+    unsigned switchOffApWhenStaConnected: 1, disableWifiAtStartup: 1, b2: 1, b3: 1, b4: 1, b5: 1, b6: 1, b7: 1;
 };
 
-struct GPSSettings{
-  bool customGPSConfig; // When enable, GPS is configured with additional like SBAS, 5HZ, Galileo and a few others from the default
-  uint32_t Baud; //GPS-Baudrate
+union uWifiMode {
+    WifiModeBits bits;
+    uint8_t mode;
 };
 
-	struct OgnModeBits
-	{
-			unsigned liveTracking:1, sendWeather:1, fwdWeather:1, fwdName:1, b4:1, b5:1, b6:1, b7:1;
-	};
-	union uOgnMode
-	{
-			OgnModeBits bits;
-			uint8_t mode;
-	};
-
-
-struct SettingsData{
-  uint8_t settingsView; //view of settings (basic, advanced, expert)
-  eBoard boardType;
-  uint8_t CPUFrequency; //CPU-Frequency
-  eMode Mode; //Air-Module, GS-Station,
-  eDisplay displayType;
-  uint8_t displayRotation; //displayrotation 0-3;
-  float BattVoltOffs; //offset for Battery-multiplier
-  uint8_t minBattPercent;
-  uint8_t restartBattPercent;
-  uint8_t myDevIdType; // Address type 0=Stateless Random, 1=Official ICAO, 2=stableFlarm, FF=Not overridden
-  String myDevId; //my device-ID
-  GPSSettings gps;
-  eOutputVario outputModeVario;
-  uint8_t outputFLARM;
-  uint8_t outputGPS;
-  uint8_t outputFANET;
-  bool bOutputSerial; //additional output over serial-interface
-  uint8_t awLiveTracking; //airwhere live-tracking
-  WifiSettings wifi;
-  String PilotName; //Pilotname
-  uint8_t AircraftType; //Aircrafttype
-  String UDPServerIP; //UDP-IP-Adress for sending Pakets
-  uint16_t UDPSendPort; //Port of udp-server
-  eOutput outputMode; //output-mode
-  GSSettings gs;
-  VarioSettings vario; //variosettings
-  uOgnMode OGNLiveTracking; //OGN-Live-Tracking
-  uint8_t screenNumber; //number of default-screen
-  uint8_t RFMode; //RF-Mode
-  uint8_t traccarLiveTracking; //Traccar live-tracking
-  String TraccarSrv; //OGN-Live-Tracking  
-  WeatherSettings wd;
-  weatherupload WUUpload; //weather-underground upload-settings
-  weatherupload WindyUpload; //weather-underground upload-settings
-  GsmSettings gsm; //settings for GSM
-  eFnMode fanetMode; //fanet tracking-mode 0 ... switch between online-tracking and ground-tracking 1 ... always online-tracking
-  uint16_t fanetpin; //pin for fanet (4 signs)
-  bool bHasExtPowerSw; //has external power-switch
-  bool bHasFuelSensor; //has fuel-Sensor
-  MqttSettings mqtt;
-  Fanetweatherupload FntWuUpload[MAXFNTUPLOADSTATIONS]; //Fanet WU Upload
-  Fanetweatherupload FntWiUpload[MAXFNTUPLOADSTATIONS]; //Fanet Wi Upload
-  bool bAutoupdate; //auto-update to new Version
+struct WifiSettings {
+    String appw; //access-point-Password
+    String ssid; //WIFI SSID
+    String password; //WIFI PASSWORD
+    eWifiMode connect; //1 connect to wifi, 2 connect to wifi and try to stay connected
+    uint32_t tWifiStop; //time after wifi will be stopped to save energy 0 --> never
+    uWifiMode uMode; //wifi-mode
 };
 
-struct wdErrorBits
-{
-    unsigned VanevalueInvalid:1, b1:1, b2:1, b3:1, b4:1, b5:1, b6:1, notStarted:1;
+struct GPSSettings {
+    bool customGPSConfig;
+    // When enable, GPS is configured with additional like SBAS, 5HZ, Galileo and a few others from the default
+    uint32_t Baud; //GPS-Baudrate
 };
-union uWdError
-{
+
+struct OgnModeBits {
+    unsigned liveTracking: 1, sendWeather: 1, fwdWeather: 1, fwdName: 1, b4: 1, b5: 1, b6: 1, b7: 1;
+};
+
+union uOgnMode {
+    OgnModeBits bits;
+    uint8_t mode;
+};
+
+
+struct SettingsData {
+    uint8_t settingsView; //view of settings (basic, advanced, expert)
+    eBoard boardType;
+    uint8_t CPUFrequency; //CPU-Frequency
+    eMode Mode; //Air-Module, GS-Station,
+    eDisplay displayType;
+    uint8_t displayRotation; //displayrotation 0-3;
+    float BattVoltOffs; //offset for Battery-multiplier
+    uint8_t minBattPercent;
+    uint8_t restartBattPercent;
+    uint8_t myDevIdType; // Address type 0=Stateless Random, 1=Official ICAO, 2=stableFlarm, FF=Not overridden
+    String myDevId; //my device-ID
+    GPSSettings gps;
+    eOutputVario outputModeVario;
+    uint8_t outputFLARM;
+    uint8_t outputGPS;
+    uint8_t outputFANET;
+    bool bOutputSerial; //additional output over serial-interface
+    uint8_t awLiveTracking; //airwhere live-tracking
+    WifiSettings wifi;
+    String PilotName; //Pilotname
+    uint8_t AircraftType; //Aircrafttype
+    String UDPServerIP; //UDP-IP-Adress for sending Pakets
+    uint16_t UDPSendPort; //Port of udp-server
+    eOutput outputMode; //output-mode
+    GSSettings gs;
+    VarioSettings vario; //variosettings
+    uOgnMode OGNLiveTracking; //OGN-Live-Tracking
+    uint8_t screenNumber; //number of default-screen
+    uint8_t RFMode; //RF-Mode
+    uint8_t traccarLiveTracking; //Traccar live-tracking
+    String TraccarSrv; //OGN-Live-Tracking
+    WeatherSettings wd;
+    weatherupload WUUpload; //weather-underground upload-settings
+    weatherupload WindyUpload; //weather-underground upload-settings
+    GsmSettings gsm; //settings for GSM
+    eFnMode fanetMode;
+    //fanet tracking-mode 0 ... switch between online-tracking and ground-tracking 1 ... always online-tracking
+    uint16_t fanetpin; //pin for fanet (4 signs)
+    bool bHasExtPowerSw; //has external power-switch
+    bool bHasFuelSensor; //has fuel-Sensor
+    MqttSettings mqtt;
+    Fanetweatherupload FntWuUpload[MAXFNTUPLOADSTATIONS]; //Fanet WU Upload
+    Fanetweatherupload FntWiUpload[MAXFNTUPLOADSTATIONS]; //Fanet Wi Upload
+    bool bAutoupdate; //auto-update to new Version
+};
+
+struct wdErrorBits {
+    unsigned VanevalueInvalid: 1, b1: 1, b2: 1, b3: 1, b4: 1, b5: 1, b6: 1, notStarted: 1;
+};
+
+union uWdError {
     wdErrorBits bits;
     uint8_t value;
 };
 
-struct weatherStatus{
-  bool bTemp; //temp exists
-  float temp = NAN; //temp [°C]
-  bool bHumidity; //humidity exists
-  float Humidity = NAN; // [%rH]
-  bool bPressure; // pressure exists
-  float Pressure = NAN; // [hPa]
-  float WindDir = NAN; //[Deg]
-  float WindSpeed = NAN; //[km/h]
-  float WindGust = NAN; //[km/h]
-  bool bRain; //rain-sensor exists
-  float rain1h = NAN; // rain this hour [l/h]
-  float rain1d = NAN; // rain this day [l/h]
-  int vaneVAlue = 0;
-  uWdError error;
+struct weatherStatus {
+    bool bTemp; //temp exists
+    float temp = NAN; //temp [°C]
+    bool bHumidity; //humidity exists
+    float Humidity = NAN; // [%rH]
+    bool bPressure; // pressure exists
+    float Pressure = NAN; // [hPa]
+    float WindDir = NAN; //[Deg]
+    float WindSpeed = NAN; //[km/h]
+    float WindGust = NAN; //[km/h]
+    bool bRain; //rain-sensor exists
+    float rain1h = NAN; // rain this hour [l/h]
+    float rain1d = NAN; // rain this day [l/h]
+    int vaneVAlue = 0;
+    uWdError error;
 };
 
-struct commandData{
-  uint8_t ConfigGPS; //command to configure GPS
-  uint8_t CalibAcc;  //command calibrate acc
-  uint8_t CalibGyro; //command calibrate Gyro
-  uint8_t getGpsPos; //command to get GPS-Position
+struct commandData {
+    uint8_t ConfigGPS; //command to configure GPS
+    uint8_t CalibAcc; //command calibrate acc
+    uint8_t CalibGyro; //command calibrate Gyro
+    uint8_t getGpsPos; //command to get GPS-Position
 };
 
-struct gsmStatus{
-  bool bHasGSM;
-  int16_t SignalQuality; //signalquality
-  int16_t networkstat; //networkstatus
-  String sOperator; //Operator
-  uint32_t baud;
+struct gsmStatus {
+    bool bHasGSM;
+    int16_t SignalQuality; //signalquality
+    int16_t networkstat; //networkstatus
+    String sOperator; //Operator
+    uint32_t baud;
 };
 
-struct statusNetwork{
-  eConnectionState state = IDLE;
-  String ip = "";
+struct statusNetwork {
+    eConnectionState state = IDLE;
+    String ip = "";
 };
 
-struct statusWifi{
-  eConnectionState state = IDLE;
-  String ip = "";
-  int8_t Rssi;
+struct statusWifi {
+    eConnectionState state = IDLE;
+    String ip = "";
+    int8_t Rssi;
 };
 
-struct statusGPS{
-  bool bHasGPS;
-  bool bExtGps = false;
-  uint8_t NumSat;
-  uint8_t Fix;
-  double Lat;
-  double Lon;
-  float alt;
-  float speed;
-  float course;
-  float geoidAlt;
-  char Date[10];
-  char Time[10];  
-  uint32_t tCycle;  
+struct statusGPS {
+    bool bHasGPS;
+    bool bExtGps = false;
+    uint8_t NumSat;
+    uint8_t Fix;
+    double Lat;
+    double Lon;
+    float alt;
+    float speed;
+    float course;
+    float geoidAlt;
+    char Date[10];
+    char Time[10];
+    uint32_t tCycle;
 };
 
-struct statusBat{
-  bool charging;  
-  uint16_t voltage; //battery-voltage 1/1000V
-  uint8_t percent; //battery-percent
+struct statusBat {
+    bool charging;
+    uint16_t voltage; //battery-voltage 1/1000V
+    uint8_t percent; //battery-percent
 };
 
-struct statusRestart{
-  uint32_t time;
-  bool doRestart;
+struct statusRestart {
+    uint32_t time;
+    bool doRestart;
 };
 
-struct statusData{
-  uint8_t displayType;
-  statusNetwork wifiAP;
-  statusWifi wifiSTA;
-  bool bWifiOn;
-  statusBat battery;
-  statusGPS gps;
-  uint16_t fanetTx;
-  uint16_t fanetRx;
-  uint16_t legTx;
-  uint16_t legRx;
-  ePMU PMU;
-  statusVario vario;
-  bool bWUBroadCast;
-  uint32_t tLoop; //current Loop-time
-  uint32_t tMaxLoop; //max Loop-time
-  bool flying;
-  uint8_t bluetoothStat;
-  uint32_t flightTime; //flight-time in sek.
-  bool bMuting; //muting beeper
-  bool bPowerOff;
-  weatherStatus weather;
-  eConnectionState modemstatus; //status of mobile-device (sim800)
-  bool bInternetConnected;
-  bool bTimeOk;
-  gsmStatus gsm;
-  eDisplayState displayStat; //stat of display
-  uint8_t updateState; //state of update
-  String sNewVersion;
-  uint32_t tRestart;
-  float fuelSensor; //ads of fuel-sensor
-  uint8_t calibAccStat;
-  uint8_t FanetMsgCount;
-  String lastFanetMsg;
-  uint8_t MqttStat;
-  statusRestart restart;
-
+struct statusData {
+    uint8_t displayType;
+    statusNetwork wifiAP;
+    statusWifi wifiSTA;
+    bool bWifiOn;
+    statusBat battery;
+    statusGPS gps;
+    uint16_t fanetTx;
+    uint16_t fanetRx;
+    uint16_t legTx;
+    uint16_t legRx;
+    ePMU PMU;
+    statusVario vario;
+    bool bWUBroadCast;
+    uint32_t tLoop; //current Loop-time
+    uint32_t tMaxLoop; //max Loop-time
+    bool flying;
+    uint8_t bluetoothStat;
+    uint32_t flightTime; //flight-time in sek.
+    bool bMuting; //muting beeper
+    bool bPowerOff;
+    weatherStatus weather;
+    eConnectionState modemstatus; //status of mobile-device (sim800)
+    bool bInternetConnected;
+    bool bTimeOk;
+    gsmStatus gsm;
+    eDisplayState displayStat; //stat of display
+    uint8_t updateState; //state of update
+    String sNewVersion;
+    uint32_t tRestart;
+    float fuelSensor; //ads of fuel-sensor
+    uint8_t calibAccStat;
+    uint8_t FanetMsgCount;
+    String lastFanetMsg;
+    uint8_t MqttStat;
+    statusRestart restart;
 };
 
 //define wifi-events on for old framework
