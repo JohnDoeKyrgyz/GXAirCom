@@ -3336,7 +3336,9 @@ bool printBattVoltage(uint32_t tAct){
 }
 
 void setWifi(bool stationOn, bool accessPointOn){
-  if (stationOn && !status.bWifiStaOn || accessPointOn && !status.bWifiApOn){
+  bool turnStaOn = stationOn && !status.bWifiStaOn;
+  bool turnApOn = accessPointOn && !status.bWifiApOn;
+  if (turnStaOn || turnApOn){
     log_i("switch WIFI ON");
     int desiredCpuFrequency = max(static_cast<uint8_t>(80), setting.CPUFrequency);
     if (getCpuFrequencyMhz() != desiredCpuFrequency) {
@@ -3356,12 +3358,14 @@ void setWifi(bool stationOn, bool accessPointOn){
     if (setting.wifi.connect != CONNECT_NONE){
       //esp_wifi_set_auto_connect(true);
       log_i("Try to connect to WiFi ");
-      if (setting.wifi.uMode.bits.switchOffApWhenStaConnected){
-        WiFi.mode(WIFI_MODE_STA);
-      }else{
+      if (turnApOn && turnStaOn) {
         WiFi.mode(WIFI_MODE_APSTA);
         setupSoftAp();
-      }    
+      } else if (turnApOn) {
+        WiFi.mode(WIFI_MODE_AP);
+      } else {
+        WiFi.mode(WIFI_MODE_STA);
+      }
 
       WiFi.begin(setting.wifi.ssid.c_str(), setting.wifi.password.c_str());
 
@@ -5146,7 +5150,11 @@ void taskBackGround(void *pvParameters){
   #endif
   
   setupWifi();
-  setWifi(!setting.wifi.uMode.bits.disableWifiAtStartup, !setting.wifi.uMode.bits.disableWifiAtStartup);
+  bool turnWifiStaOn =
+    !setting.wifi.uMode.bits.disableWifiAtStartup
+    // if this is true, we turn WifiSta on. If the WiFi connection is invalid it will turn on AP mode to allow the user to configure WiFi
+    || setting.wifi.uMode.bits.switchOffApWhenStaConnected;
+  setWifi(turnWifiStaOn, !setting.wifi.uMode.bits.disableWifiAtStartup);
   #ifdef GSM_MODULE
     if (setting.wifi.connect == eWifiMode::CONNECT_NONE){      
       updater.setClient(&GsmUpdaterClient);
@@ -5333,12 +5341,15 @@ void taskBackGround(void *pvParameters){
     if (wifiCMD == 11) setWifi(true, status.bWifiApOn); //switch wifi on
     if (wifiCMD == 10) setWifi(false, status.bWifiApOn); //switch wifi off
 
-    //TODO: Stop Wifi Access Point
-
     if (tAct > setting.wifi.tWifiStaStop * 1000 && setting.wifi.tWifiStaStop != 0 && !WebUpdateRunning){
-      log_i("******************WEBCONFIG Setting - WIFI STOPPING*************************");
+      log_i("******************WEBCONFIG Setting - WIFI STA STOPPING*************************");
       log_i("currHeap:%d,minHeap:%d", xPortGetFreeHeapSize(), xPortGetMinimumEverFreeHeapSize());
       setWifi(false, status.bWifiApOn);
+    }
+    if (tAct > setting.wifi.tWifiApStop * 1000 && setting.wifi.tWifiApStop != 0){
+      log_i("******************WEBCONFIG Setting - WIFI AP STOPPING*************************");
+      log_i("currHeap:%d,minHeap:%d", xPortGetFreeHeapSize(), xPortGetMinimumEverFreeHeapSize());
+      setWifi(status.bWifiStaOn, false);
     }
     //yield();
     if (status.bPowerOff){
