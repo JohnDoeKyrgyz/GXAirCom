@@ -105,7 +105,7 @@ void onWebSocketEvent(uint8_t client_num,
                       WStype_t type,
                       uint8_t * payload,
                       size_t length) {
-  StaticJsonDocument<650> doc;                      //Memory pool
+  StaticJsonDocument<666> doc; //Memory pool
   JsonObject root = doc.to<JsonObject>();
   DeserializationError error;
   uint8_t value = 0;
@@ -237,9 +237,6 @@ void onWebSocketEvent(uint8_t client_num,
           doc["fuelValue"] = String(status.fuelSensor,3);
           serializeJson(doc, msg_buf);
           webSocket.sendTXT(client_num, msg_buf);
-
-
-
         }else if (clientPages[client_num] == 3){ //sendmessage
           doc.clear();
           doc["setView"] = setting.settingsView;
@@ -261,7 +258,7 @@ void onWebSocketEvent(uint8_t client_num,
           doc["dispRot"] = setting.displayRotation;
           doc["expwsw"] = setting.bHasExtPowerSw;
           doc["mode"] = setting.Mode;
-          doc["type"] = (uint8_t)setting.AircraftType;
+          doc["type"] = setting.AircraftType;
           doc["PilotName"] = setting.PilotName;
           doc["ognlive"] = setting.OGNLiveTracking.mode;
           doc["traccar_live"] = setting.traccarLiveTracking;
@@ -292,7 +289,8 @@ void onWebSocketEvent(uint8_t client_num,
           doc["WIFI_MODE"] = setting.wifi.uMode.mode;
           doc["ssid"] = setting.wifi.ssid;
           doc["password"] = setting.wifi.password;
-          doc["wifioff"] = setting.wifi.tWifiStop;
+          doc["wifiApOff"] = setting.wifi.tWifiApStop;
+          doc["wifiStaOff"] = setting.wifi.tWifiStaStop;
           serializeJson(doc, msg_buf);
           webSocket.sendTXT(client_num, msg_buf);
 
@@ -483,7 +481,8 @@ void onWebSocketEvent(uint8_t client_num,
         if (root.containsKey("oFanet")) newSetting.outputFANET = doc["oFanet"].as<uint8_t>();
         if (root.containsKey("oVario")) newSetting.outputModeVario = eOutputVario(doc["oVario"].as<uint8_t>());
         if (root.containsKey("awlive")) newSetting.awLiveTracking = doc["awlive"].as<uint8_t>();
-        if (root.containsKey("wifioff")) newSetting.wifi.tWifiStop = doc["wifioff"].as<uint32_t>();
+        if (root.containsKey("wifiApOff")) newSetting.wifi.tWifiApStop = doc["wifiApOff"].as<uint32_t>();
+        if (root.containsKey("wifiStaOff")) newSetting.wifi.tWifiStaStop = doc["wifiStaOff"].as<uint32_t>();
         if (root.containsKey("UDPServerIP")) newSetting.UDPServerIP = doc["UDPServerIP"].as<String>();
         if (root.containsKey("UDPSendPort")) newSetting.UDPSendPort = doc["UDPSendPort"].as<uint16_t>();
         if (root.containsKey("AUTOUPDATE")) newSetting.bAutoupdate = doc["AUTOUPDATE"].as<uint8_t>();

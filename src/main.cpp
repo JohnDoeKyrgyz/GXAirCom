@@ -382,7 +382,7 @@ char* readSerial();
 void checkReceivedLine(const char *ch_str);
 void checkSystemCmd(const char *ch_str);
 size_t getNextString(char *ch_str,char *pSearch,char *buffer, size_t sizeBuffer);
-void setWifi(bool on);
+void setWifi(bool stationOn, bool accessPointOn);
 void handleUpdate(uint32_t tAct);
 void printChipInfo();
 void setAllTime(tm &timeinfo);
@@ -1310,10 +1310,8 @@ void WiFiEvent(WiFiEvent_t event){
       log_i("station got IP from connected AP IP:%s",status.wifiSTA.ip.c_str());
       break;
     case ARDUINO_EVENT_WIFI_STA_LOST_IP:
-      status.wifiSTA.ip = "";            
-      log_i("STA LOST IP. Reconnect...");
-      status.bWifiOn = false;
-      setWifi(true);
+      status.wifiSTA.ip = "";
+      status.wifiSTA.state = DISCONNECTED;
       break;
     case ARDUINO_EVENT_WIFI_AP_START:
       status.wifiAP.state = STARTED;
@@ -1344,6 +1342,7 @@ void setupSoftAp(){
   log_i("Set soft-AP settings");
   WiFi.softAP(host_name.c_str(), setting.wifi.appw.c_str());
   WiFi.softAPConfig(local_IP, gateway, subnet);
+  status.bWifiApOn = true;
 }
 
 void setupWifi(){
@@ -1352,76 +1351,12 @@ void setupWifi(){
   }
   status.bInternetConnected = false;
   status.wifiSTA.state = IDLE;
-  status.bWifiOn = false;
+  status.bWifiStaOn = false;
   WiFi.disconnect(true,true);
   WiFi.mode(WIFI_MODE_NULL);  
   WiFi.persistent(false);
   WiFi.onEvent(WiFiEvent);
-  //WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE,INADDR_NONE,INADDR_NONE);
-  WiFi.config(IPADDR_ANY, IPADDR_ANY, IPADDR_ANY,IPADDR_ANY,IPADDR_ANY); // call is only a workaround for bug in WiFi class
   WiFi.setHostname(host_name.c_str());
-  
-  /*
-  if (setting.wifi.uMode.bits.disableWifiAtStartup){
-    return; //--> no wifi at startup --> we are ready
-  }
-  
-  //delay(10);
-
-  //now configure access-point
-  //so we have wifi connect and access-point at same time
-  //we connecto to wifi
-  if (setting.wifi.connect != eWifiMode::CONNECT_NONE){
-    //esp_wifi_set_auto_connect(true);
-    log_i("Try to connect to WiFi ");
-    WiFi.status();
-    if (setting.wifi.uMode.bits.switchOffApWhenStaConnected){
-      WiFi.mode(WIFI_MODE_STA);
-    }else{
-      WiFi.mode(WIFI_MODE_APSTA);
-      setupSoftAp();
-    }    
-    if ((WiFi.SSID() != setting.wifi.ssid || WiFi.psk() != setting.wifi.password)){
-      // ... Try to connect to WiFi station.
-      WiFi.begin(setting.wifi.ssid.c_str(), setting.wifi.password.c_str());
-    } else {
-      // ... Begin with sdk config.
-      WiFi.begin();
-    }
-    uint32_t tStart = millis();    
-    while(WiFi.status() != WL_CONNECTED){
-      if (timeOver(millis(),tStart,10000)){ //wait max. 10seconds
-        break;
-      }
-      delay(100);
-    }
-    if (WiFi.status() == WL_CONNECTED){
-      log_i("wifi connected");
-    }else{
-      log_i("wifi not connected --> switch on AP");
-      WiFi.disconnect();
-      WiFi.mode(WIFI_MODE_AP); //start AP
-      setupSoftAp();
-    }
-  }else{
-    WiFi.mode(WIFI_MODE_AP);
-    setupSoftAp();
-  }
-  log_i("hostname=%s",host_name.c_str());  
-
-
-  log_i("my APIP=%s",local_IP.toString().c_str());
-
-  
-  if((WiFi.getMode() & WIFI_MODE_STA)){
-    if (setting.outputMode != eOutput::oBLE){
-      WiFi.setSleep(false); //disable power-save-mode !! will increase ping-time
-    }
-  }
-  status.bWifiOn = true;
-  delay(2000);
-  Web_setup();
-  */
 }
 
 void printSettings(){
@@ -1448,7 +1383,8 @@ void printSettings(){
   log_i("WIFI PW=%s",setting.wifi.password.c_str());
   log_i("Aircraft=%s",fanet.getAircraftType((FanetLora::aircraft_t)setting.AircraftType).c_str());
   log_i("Pilotname=%s",setting.PilotName.c_str());
-  log_i("Wifi-down-time=%d",setting.wifi.tWifiStop);
+  log_i("Wifi-access-point-down-time=%d",setting.wifi.tWifiStaStop);
+  log_i("Wifi-station-down-time=%d",setting.wifi.tWifiStaStop);
   log_i("Output-Mode=%d",setting.outputMode);
   log_i("UDP_SERVER=%s",setting.UDPServerIP.c_str());
   log_i("UDP_PORT=%d",setting.UDPSendPort);
@@ -1746,7 +1682,7 @@ void setup() {
   status.bInternetConnected = false;
   status.bTimeOk = false;
   status.modemstatus = eConnectionState::DISCONNECTED;
-  status.bWifiOn = false;
+  status.bWifiStaOn = false;
   command.ConfigGPS = 0;
   status.gps.bHasGPS = false;
   fanet.setGPS(false);
@@ -3399,8 +3335,8 @@ bool printBattVoltage(uint32_t tAct){
   }
 }
 
-void setWifi(bool on){
-  if (on && !status.bWifiOn){
+void setWifi(bool stationOn, bool accessPointOn){
+  if (stationOn && !status.bWifiStaOn || accessPointOn && !status.bWifiApOn){
     log_i("switch WIFI ON");
     int desiredCpuFrequency = max(static_cast<uint8_t>(80), setting.CPUFrequency);
     if (getCpuFrequencyMhz() != desiredCpuFrequency) {
@@ -3408,10 +3344,10 @@ void setWifi(bool on){
       log_i("set CPU-Speed to %dMHz",getCpuFrequencyMhz());
     }
     delay(10); //wait 10ms
+
     WiFi.disconnect(true,true);
     WiFi.mode(WIFI_MODE_NULL);
     WiFi.persistent(false);
-    // WiFi.config(IPADDR_ANY, IPADDR_ANY, IPADDR_ANY,IPADDR_ANY,IPADDR_ANY); // call is only a workaround for bug in WiFi class
     WiFi.setHostname(host_name.c_str());      
 
     //now configure access-point
@@ -3426,13 +3362,9 @@ void setWifi(bool on){
         WiFi.mode(WIFI_MODE_APSTA);
         setupSoftAp();
       }    
-      if (WiFi.SSID() != setting.wifi.ssid || WiFi.psk() != setting.wifi.password){
-        // ... Try to connect to WiFi station.
-        WiFi.begin(setting.wifi.ssid.c_str(), setting.wifi.password.c_str());
-      } else {
-        // ... Begin with sdk config.
-        WiFi.begin();
-      }
+
+      WiFi.begin(setting.wifi.ssid.c_str(), setting.wifi.password.c_str());
+
       uint32_t tStart = millis();    
       while(WiFi.status() != WL_CONNECTED){
         if (timeOver(millis(),tStart,10000)){ //wait max. 10seconds
@@ -3460,18 +3392,30 @@ void setWifi(bool on){
         WiFi.setTxPower(WIFI_POWER_19_5dBm); //maximum wifi-power
       }
     }
-    status.bWifiOn = true; 
+    status.bWifiStaOn = true;
     Web_setup(); 
   }
-  if (!on && status.bWifiOn){
-    log_i("switch WIFI OFF");
-    setting.wifi.tWifiStop=0;
-    Web_stop();
-    WiFi.softAPdisconnect(true);
-    WiFi.disconnect(true);
-    WiFi.mode(WIFI_MODE_NULL);
-    status.bWifiOn = false;
-    
+
+  bool turnOffSta = !stationOn && status.bWifiStaOn;
+  bool turnOffAp = !accessPointOn && status.bWifiApOn;
+  if(turnOffAp || turnOffSta) {
+    if (turnOffSta){
+      log_i("switch WIFI STA OFF");
+      setting.wifi.tWifiStaStop=0;
+      WiFi.disconnect(true);
+      status.bWifiStaOn = false;
+    }
+    if (turnOffAp){
+      log_i("switch WIFI AP OFF");
+      setting.wifi.tWifiApStop=0;
+      WiFi.softAPdisconnect(true);
+      status.bWifiApOn = false;
+    }
+    wifi_mode_t wifiMode;
+    if (turnOffAp && turnOffSta) wifiMode = WIFI_MODE_NULL;
+    else if (turnOffAp && !turnOffSta) wifiMode = WIFI_MODE_STA;
+    else if (!turnOffAp && turnOffSta) wifiMode = WIFI_MODE_AP;
+    WiFi.mode(wifiMode);
   }
   wifiCMD = 0;
 }
@@ -3569,7 +3513,8 @@ void checkSystemCmd(const char *ch_str){
     doc["WIFI_MODE"] = setting.wifi.uMode.mode;
     doc["ssid"] = setting.wifi.ssid;
     doc["password"] = setting.wifi.password;
-    doc["wifioff"] = setting.wifi.tWifiStop;
+    doc["wifiApOff"] = setting.wifi.tWifiApStop;
+    doc["wifiStaOff"] = setting.wifi.tWifiStaStop;
     serializeJson(doc, msg_buf);
     add2OutputString(String(msg_buf));
     return;
@@ -4430,7 +4375,7 @@ void taskStandard(void *pvParameters){
       //log_v("double clicked IRQ"); --> switch wifi off or on
       log_i("double clicked wifi on/off");
       userled.setState(gxUserLed::off); //switch to state off --> so state is working
-      if (status.bWifiOn){
+      if (status.bWifiStaOn){
         userled.setState(gxUserLed::showWifiDis);
         wifiCMD = 10; //switch off wifi
       }else{
@@ -5188,7 +5133,6 @@ void handleUpdate(uint32_t tAct){
 
 void taskBackGround(void *pvParameters){
   static uint32_t tWifiCheck = millis();
-  //static uint32_t warning_time=0;
   static uint32_t tGetTime = millis();
   uint32_t tBattEmpty = millis();
   uint32_t tRuntime = millis();
@@ -5202,7 +5146,7 @@ void taskBackGround(void *pvParameters){
   #endif
   
   setupWifi();
-  setWifi(!setting.wifi.uMode.bits.disableWifiAtStartup);
+  setWifi(!setting.wifi.uMode.bits.disableWifiAtStartup, !setting.wifi.uMode.bits.disableWifiAtStartup);
   #ifdef GSM_MODULE
     if (setting.wifi.connect == eWifiMode::CONNECT_NONE){      
       updater.setClient(&GsmUpdaterClient);
@@ -5217,32 +5161,15 @@ void taskBackGround(void *pvParameters){
     if  (status.wifiSTA.state != IDLE){
       Web_loop();
     }
+
     handleUpdate(tAct);
-    /*
-    if (pMqtt){
-      pMqtt->run(status.bInternetConnected);
-      char cmd[100];
-      if (pMqtt->getLastCmd(cmd,100)){
-        checkReceivedLine(cmd);
-      }
-      if (sMqttState[0]){
-        xSemaphoreTake( xOutputMutex, portMAX_DELAY );
-        pMqtt->sendState(sMqttState);
-        sMqttState[0] = 0;
-        xSemaphoreGive(xOutputMutex);
-      }      
-      if ((myWdCount != wdCount) && (setting.mqtt.mode.bits.sendWeather)) {
-        pMqtt->sendTopic("WD",pWd,false);
-        myWdCount = wdCount;
-      }
-    }
-    */ 
+
     #ifdef GSMODULE  
     if (setting.Mode == GROUND_STATION){
       if (status.bTimeOk == true){
         tm now;
         getLocalTime(&now,0);
-        if ((now.tm_mday != actDay) && (now.tm_hour > 0)){
+        if (now.tm_mday != actDay && now.tm_hour > 0){
           //restart every new day --> to get new NTP-Time
           //every day at 01:00am
           log_i("day changed %d->%d hour:%d",actDay,now.tm_mday,now.tm_hour);
@@ -5380,23 +5307,8 @@ void taskBackGround(void *pvParameters){
     }
     if (timeOver(tAct,tWifiCheck,WIFI_RECONNECT_TIME)){
       tWifiCheck = tAct;
-      if (setting.wifi.connect == CONNECT_ALWAYS && status.bWifiOn){
-        //log_i("check Wifi-status %d ",status.wifiSTA.state);
-        if (status.wifiSTA.state != FULL_CONNECTED){
-          log_i("WiFi not connected. Try to reconnect");
-          WiFi.disconnect(true,true);
-          WiFi.mode(WIFI_MODE_NULL);
-          WiFi.persistent(false);
-          WiFi.config(IPADDR_ANY, IPADDR_ANY, IPADDR_ANY,IPADDR_ANY,IPADDR_ANY); // call is only a workaround for bug in WiFi class
-          //WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE,INADDR_NONE,INADDR_NONE); // call is only a workaround for bug in WiFi class
-          WiFi.setHostname(host_name.c_str()); //set hostname          
-          if (setting.wifi.uMode.bits.switchOffApWhenStaConnected){
-            WiFi.mode(WIFI_MODE_STA);
-          }else{
-            WiFi.mode(WIFI_MODE_APSTA);
-          }
-          WiFi.begin(setting.wifi.ssid.c_str(), setting.wifi.password.c_str());
-        }
+      if (setting.wifi.connect == CONNECT_ALWAYS && status.bWifiStaOn){
+        setWifi(true, status.bWifiApOn);
       }
     }
     uint32_t actFreeHeap = xPortGetFreeHeapSize();
@@ -5418,12 +5330,15 @@ void taskBackGround(void *pvParameters){
       esp_restart();
     }
 
-    if (wifiCMD == 11) setWifi(true); //switch wifi on
-    if (wifiCMD == 10) setWifi(false); //switch wifi off
-    if (tAct > setting.wifi.tWifiStop * 1000 && setting.wifi.tWifiStop != 0 && !WebUpdateRunning){
+    if (wifiCMD == 11) setWifi(true, status.bWifiApOn); //switch wifi on
+    if (wifiCMD == 10) setWifi(false, status.bWifiApOn); //switch wifi off
+
+    //TODO: Stop Wifi Access Point
+
+    if (tAct > setting.wifi.tWifiStaStop * 1000 && setting.wifi.tWifiStaStop != 0 && !WebUpdateRunning){
       log_i("******************WEBCONFIG Setting - WIFI STOPPING*************************");
       log_i("currHeap:%d,minHeap:%d", xPortGetFreeHeapSize(), xPortGetMinimumEverFreeHeapSize());
-      setWifi(false);
+      setWifi(false, status.bWifiApOn);
     }
     //yield();
     if (status.bPowerOff){

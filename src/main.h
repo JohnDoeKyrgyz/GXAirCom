@@ -1,6 +1,7 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <Arduino.h>
 #include "enums.h"
 #define MAXSTRING 255
 #define MAXSIZEBLE 256 // same as local mtu
@@ -359,7 +360,8 @@ struct WifiSettings {
     String ssid; //WIFI SSID
     String password; //WIFI PASSWORD
     eWifiMode connect; //1 connect to wifi, 2 connect to wifi and try to stay connected
-    uint32_t tWifiStop; //time after wifi will be stopped to save energy 0 --> never
+    uint32_t tWifiStaStop; //time after wifi station mode will be stopped to save energy 0 --> never
+    uint32_t tWifiApStop; //time after wifi access point will be stopped
     uWifiMode uMode; //wifi-mode
 };
 
@@ -509,7 +511,8 @@ struct statusData {
     uint8_t displayType;
     statusNetwork wifiAP;
     statusWifi wifiSTA;
-    bool bWifiOn;
+    bool bWifiStaOn;
+    bool bWifiApOn;
     statusBat battery;
     statusGPS gps;
     uint16_t fanetTx;

@@ -1,28 +1,164 @@
 #ifndef __FILEOPS_H__
 #define __FILEOPS_H__
 
+#define KEY_SETVIEW "setView"
+#define KEY_ACESSPOINT_PASSWORD "APPW"
+#define KEY_BOARDTYPE "BOARDTYPE"
+#define KEY_CPUFREQU "CPUFREQU"
+#define KEY_EXTPWSW "EXTPWSW"
+#define KEY_RFM "RFM"
+#define KEY_AWLIVE "AWLIVE"
+#define KEY_OSerial "OSerial"
+#define KEY_OVario "OVario"
+#define KEY_OFLARM "OFLARM"
+#define KEY_OGPS "OGPS"
+#define KEY_OFANET "OFANET"
+#define KEY_PILOTNAME "PILOTNAME"
+#define KEY_myDevId "myDevId"
+#define KEY_myDevIdType "myDevIdType"
+#define KEY_customGPSConfig "customGPSConfig"
+#define KEY_GPSBAUD "GPSBAud"
+#define KEY_WIFI_MODE "WIFI_MODE"
+#define KEY_WIFI_CONNECT "WIFI_CONNECT"
+#define KEY_WIFI_SSID "WIFI_SSID"
+#define KEY_WIFI_PW "WIFI_PW"
+#define KEY_WIFISTA_STOP "WIFI_STA_STOP"
+#define KEY_WIFIAP_STOP "WIFI_AP_STOP"
+#define KEY_AIRCRAFTTYPE "AIRCRAFTTYPE"
+#define KEY_WIFI_AP_STOP "WIFI_AP_STOP"
+#define KEY_WIFI_STA_STOP "WIFI_STA_STOP"
+#define KEY_UDP_SERVER "UDP_SERVER"
+#define KEY_UDP_PORT "UDP_PORT"
+#define KEY_OutputMode "OutputMode"
+#define KEY_Mode "Mode"
+#define KEY_fntMode "fntMode"
+#define KEY_fntPin "fntPin"
+#define KEY_AUTOUPDATE "AUTOUPDATE"
+#define KEY_GSLAT "GSLAT"
+#define KEY_GSLON "GSLON"
+#define KEY_GSALT "GSALT"
+#define KEY_GSGEOALT "GSGEOALT"
+#define KEY_GSSCR "GSSCR"
+#define KEY_GSPS "GSPS"
+#define KEY_GsSrO "GsSrO"
+#define KEY_GsSsO "GsSsO"
+#define KEY_GSANEO "GSANEO"
+#define KEY_WDANEOADSGAIN "WDANEOADSGAIN"
+#define KEY_WDANEOADSVDIVR1 "WDANEOADSVDIVR1"
+#define KEY_WDANEOADSVDIVR2 "WDANEOADSVDIVR2"
+#define KEY_WDANEOADSWSMINV "WDANEOADSWSMINV"
+#define KEY_WDANEOADSWSMAXV "WDANEOADSWSMAXV"
+#define KEY_WDANEOADSWDMINV "WDANEOADSWDMINV"
+#define KEY_WDANEOADSWDMAXV "WDANEOADSWDMAXV"
+#define KEY_WDANEOADSWSMINS "WDANEOADSWSMINS"
+#define KEY_WDANEOADSWSMAXS "WDANEOADSWSMAXS"
+#define KEY_WDANEOADSWDMIND "WDANEOADSWDMIND"
+#define KEY_WDANEOADSWDMAXD "WDANEOADSWDMAXD"
+#define KEY_BattMinPerc "BattMinPerc"
+#define KEY_BATOFFS "BATOFFS"
+#define KEY_restartBattPerc "restartBattPerc"
+#define KEY_F2WuF0 "F2WuF0"
+#define KEY_F2WuF1 "F2WuF1"
+#define KEY_F2WuF2 "F2WuF2"
+#define KEY_F2WuF3 "F2WuF3"
+#define KEY_F2WuF4 "F2WuF4"
+#define KEY_F2WuI0 "F2WuI0"
+#define KEY_F2WuI1 "F2WuI1"
+#define KEY_F2WuI2 "F2WuI2"
+#define KEY_F2WuI3 "F2WuI3"
+#define KEY_F2WuI4 "F2WuI4"
+#define KEY_F2WuK0 "F2WuK0"
+#define KEY_F2WuK1 "F2WuK1"
+#define KEY_F2WuK2 "F2WuK2"
+#define KEY_F2WuK3 "F2WuK3"
+#define KEY_F2WuK4 "F2WuK4"
+#define KEY_F2WiF0 "F2WiF0"
+#define KEY_F2WiF1 "F2WiF1"
+#define KEY_F2WiF2 "F2WiF2"
+#define KEY_F2WiF3 "F2WiF3"
+#define KEY_F2WiF4 "F2WiF4"
+#define KEY_F2WiI0 "F2WiI0"
+#define KEY_F2WiI1 "F2WiI1"
+#define KEY_F2WiI2 "F2WiI2"
+#define KEY_F2WiI3 "F2WiI3"
+#define KEY_F2WiI4 "F2WiI4"
+#define KEY_F2WiK0 "F2WiK0"
+#define KEY_F2WiK1 "F2WiK1"
+#define KEY_F2WiK2 "F2WiK2"
+#define KEY_F2WiK3 "F2WiK3"
+#define KEY_F2WiK4 "F2WiK4"
+#define KEY_OGN_LIVE "OGN_LIVE"
+#define KEY_SCREEN "SCREEN"
+#define KEY_Display "Display"
+#define KEY_DispRot "DispRot"
+#define KEY_TRACCAR_LIVE "TRACCAR_LIVE"
+#define KEY_TRACCAR_SRV "TRACCAR_SRV"
+#define KEY_vSinkTh "vSinkTh"
+#define KEY_vClimbTh "vClimbTh"
+#define KEY_vNClimbSens "vNClimbSens"
+#define KEY_VarioVolume "VarioVolume"
+#define KEY_VBeepFlying "VBeepFlying"
+#define KEY_useMPU "useMPU"
+#define KEY_vTOffs "vTOffs"
+#define KEY_vSigmaP "vSigmaP"
+#define KEY_vSigmaA "vSigmaA"
+#define KEY_WsMode "WsMode"
+#define KEY_FanetWeather "FanetWeather"
+#define KEY_wdTempOffset "wdTempOffset"
+#define KEY_wdWDirOffset "wdWDirOffset"
+#define KEY_avgFanet "avgFanet"
+#define KEY_FanetWDInt "FanetWDInt"
+#define KEY_avgWU "avgWU"
+#define KEY_WUIntervall "WUIntervall"
+#define KEY_WUUlEnable "WUUlEnable"
+#define KEY_WUUlID "WUUlID"
+#define KEY_WUUlKEY "WUUlKEY"
+#define KEY_WIUlEnable "WIUlEnable"
+#define KEY_WIUlID "WIUlID"
+#define KEY_WIUlKEY "WIUlKEY"
+#define KEY_GSMAPN "GSMAPN"
+#define KEY_GSMUSER "GSMUSER"
+#define KEY_GSMKEY "GSMKEY"
+#define KEY_GSMMODE "GSMMODE"
+#define KEY_GSMPREF "GSMPREF"
+#define KEY_NBIOT "NBIOT"
+#define KEY_CATM "CATM"
+#define KEY_fuelSensor "fuelSensor"
+#define KEY_MqttEn "MqttEn"
+#define KEY_MqttServer "MqttServer"
+#define KEY_MqttPort "MqttPort"
+#define KEY_MqttPw "MqttPw"
+//fastvario
+#define KEY_axOffset "axOffset"
+#define KEY_ayOffset  "ayOffset"
+#define KEY_azOffset "azOffset"
+#define KEY_gxOffset "gxOffset"
+#define KEY_gyOffset "gyOffset"
+#define KEY_gzOffset "gzOffset"
+#define KEY_t0 "t[0]"
+#define KEY_t1 "t[1]"
+#define KEY_z0 "z[0]"
+#define KEY_z1 "z[1]"
 
-#include <Preferences.h>
 #include "main.h"
-#include "enums.h"
 
 extern SettingsData setting;
 
 void load_configFile(SettingsData* pSetting);
 void write_configFile(SettingsData* pSetting);
-void write_screenNumber(void);
-void write_Volume(void);
-void write_PilotName(void);
-void write_AircraftType(void);
-void write_AirMode(void);
-void write_Mode(void);
-void write_RFMode(void);
-void write_OutputMode(void);
-void write_LoraPower(void);
-void write_fuelsensor(void);
-void write_battOffset(void);
-void write_battMinPerc(void);
-void write_gpsBaud(void);
-void write_wifiModeBits(void);
-void write_CPUFrequency(void);
+void write_screenNumber();
+void write_Volume();
+void write_PilotName();
+void write_AircraftType();
+void write_AirMode();
+void write_Mode();
+void write_RFMode();
+void write_OutputMode();
+void write_LoraPower();
+void write_fuelsensor();
+void write_battOffset();
+void write_battMinPerc();
+void write_gpsBaud();
+void write_wifiModeBits();
+void write_CPUFrequency();
 #endif

@@ -6,5 +6,6 @@
         "*.tpp": "cpp",
         "functional": "cpp"
     },
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "FSharp.suggestGitignore": false
 }
