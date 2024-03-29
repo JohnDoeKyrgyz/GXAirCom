@@ -7,11 +7,7 @@ int led_state = 0;
 char msg_buf[500];
 #define MAXCLIENTS 10
 uint8_t clientPages[MAXCLIENTS];
-
 Logger logger;
-/***********************************************************
- * Functions
- */
 
 void sendPage(uint8_t pageNr);
 void sendPageHeader(uint8_t client_num);
@@ -21,8 +17,8 @@ void sendReceivers(uint8_t client_num){
   StaticJsonDocument<400> doc;
   doc.clear();
   uint8_t count = fanet.getNeighboursCount();
-  for (int i = 0; i < MAXWEATHERDATAS; i++){
-    if (fanet.weatherDatas[i].devId){
+  for (auto & weatherData : fanet.weatherDatas){
+    if (weatherData.devId){
       count++;
     }
   }
@@ -30,23 +26,23 @@ void sendReceivers(uint8_t client_num){
   serializeJson(doc, msg_buf);
   webSocket.sendTXT(client_num, msg_buf);
   uint8_t iIndex = 0;
-  for (int i = 0; i < MAXNEIGHBOURS; i++){
-    if (fanet.neighbours[i].devId){              
+  for (auto & neighbour : fanet.neighbours){
+    if (neighbour.devId){
       doc.clear();
       doc["INDEX"] = iIndex;
-      doc["ID"] = fanet.getDevId(fanet.neighbours[i].devId);
-      doc["NAME"] = (fanet.neighbours[i].name.length() > 0) ? fanet.neighbours[i].name : "";
+      doc["ID"] = fanet.getDevId(neighbour.devId);
+      doc["NAME"] = (neighbour.name.length() > 0) ? neighbour.name : "";
       serializeJson(doc, msg_buf);
       webSocket.sendTXT(client_num, msg_buf);
       iIndex++;
     }
   }
-  for (int i = 0; i < MAXWEATHERDATAS; i++){
-    if (fanet.weatherDatas[i].devId){              
+  for (auto & weatherData : fanet.weatherDatas){
+    if (weatherData.devId){
       doc.clear();
       doc["INDEX"] = iIndex;
-      doc["ID"] = fanet.getDevId(fanet.weatherDatas[i].devId);
-      doc["NAME"] = (fanet.weatherDatas[i].name.length() > 0) ? fanet.weatherDatas[i].name : "";
+      doc["ID"] = fanet.getDevId(weatherData.devId);
+      doc["NAME"] = (weatherData.name.length() > 0) ? weatherData.name : "";
       serializeJson(doc, msg_buf);
       webSocket.sendTXT(client_num, msg_buf);
       iIndex++;
@@ -128,7 +124,6 @@ void onWebSocketEvent(uint8_t client_num,
     case WStype_TEXT:
 
       // Print out raw message
-      
       log_i("[%u] Received text with size=%d paylod: %s", client_num, length, payload);      
       error = deserializeJson(doc, payload);
       if (error) {   //Check for errors in parsing
@@ -1410,8 +1405,8 @@ void sendPage(uint8_t pageNr){
         tCount30 = tAct;
         doc.clear();
         uint8_t count = 0;
-        for (int i = 0; i < MAXWEATHERDATAS; i++){
-          if (fanet.weatherDatas[i].devId){
+        for (auto & weatherData : fanet.weatherDatas){
+          if (weatherData.devId){
             count++;
           }
         }
@@ -1427,50 +1422,50 @@ void sendPage(uint8_t pageNr){
           break; //no weatherstations
         }
         uint8_t iIndex = 0;                  
-        for (int i = 0; i < MAXWEATHERDATAS; i++){
-          if (fanet.weatherDatas[i].devId){
+        for (auto & weatherData : fanet.weatherDatas){
+          if (weatherData.devId){
             doc.clear();
             doc["INDEX"] = iIndex;
-            doc["ID"] = fanet.getDevId(fanet.weatherDatas[i].devId);
-            doc["LAT"] = String(fanet.weatherDatas[i].lat,6);
-            doc["LON"] = String(fanet.weatherDatas[i].lon,6);
-            doc["NAME"] = (fanet.weatherDatas[i].name.length() > 0) ? fanet.weatherDatas[i].name : "";
+            doc["ID"] = fanet.getDevId(weatherData.devId);
+            doc["LAT"] = String(weatherData.lat,6);
+            doc["LON"] = String(weatherData.lon,6);
+            doc["NAME"] = (weatherData.name.length() > 0) ? weatherData.name : "";
             if ((status.gps.Lat != 0) && (status.gps.Lon != 0 )){
-              doc["DIST"] =  String(distance(status.gps.Lat,status.gps.Lon,fanet.weatherDatas[i].lat,fanet.weatherDatas[i].lon, 'K'),1);
+              doc["DIST"] =  String(distance(status.gps.Lat,status.gps.Lon,weatherData.lat,weatherData.lon, 'K'),1);
             }else{
               doc["DIST"] = "";
             }
-            if (fanet.weatherDatas[i].bTemp == 1 ) {
-              doc["T"] = String(fanet.weatherDatas[i].temp,0);
+            if (weatherData.bTemp == 1 ) {
+              doc["T"] = String(weatherData.temp,0);
             }else{
               doc["T"] = "";
             }
-            if (fanet.weatherDatas[i].bWind == 1 ) {
-              doc["WD"] = String(fanet.weatherDatas[i].wHeading,0);
-              doc["WS"] = String(fanet.weatherDatas[i].wSpeed,0);
-              doc["WG"] = String(fanet.weatherDatas[i].wGust,0);
+            if (weatherData.bWind == 1 ) {
+              doc["WD"] = String(weatherData.wHeading,0);
+              doc["WS"] = String(weatherData.wSpeed,0);
+              doc["WG"] = String(weatherData.wGust,0);
             }else{
               doc["WD"] = "";
               doc["WS"] = "";
               doc["WG"] = "";
             }
-            if (fanet.weatherDatas[i].bHumidity == 1 ) {
-              doc["H"] = String(fanet.weatherDatas[i].Humidity,0);
+            if (weatherData.bHumidity == 1 ) {
+              doc["H"] = String(weatherData.Humidity,0);
             }else{
               doc["H"] = "";
             }
-            if (fanet.weatherDatas[i].bBaro == 1 ) {
-              doc["P"] = String(fanet.weatherDatas[i].Baro,0);
+            if (weatherData.bBaro == 1 ) {
+              doc["P"] = String(weatherData.Baro,0);
             }else{
               doc["P"] = "";
             }
-            if (fanet.weatherDatas[i].bStateOfCharge == 1 ) {
-              doc["B"] =  String(fanet.weatherDatas[i].Charge,1);
+            if (weatherData.bStateOfCharge == 1 ) {
+              doc["B"] =  String(weatherData.Charge,1);
             }else{
               doc["B"] = "";
             }
-            doc["RSSI"] =  String(fanet.weatherDatas[i].rssi);
-            doc["SEEN"] = String((millis() - fanet.weatherDatas[i].tLastMsg) / 1000);
+            doc["RSSI"] =  String(weatherData.rssi);
+            doc["SEEN"] = String((millis() - weatherData.tLastMsg) / 1000);
             serializeJson(doc, msg_buf);
             for (int i = 0;i <MAXCLIENTS;i++){
               if (clientPages[i] == pageNr){
