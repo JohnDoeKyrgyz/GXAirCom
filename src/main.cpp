@@ -3336,6 +3336,7 @@ bool printBattVoltage(uint32_t tAct){
 }
 
 void setWifi(bool stationOn, bool accessPointOn){
+  log_i("setWifi stationOn=%d, accessPointOn=%d, status.bWifiStaOn=%d, status.bWifiApOn=%d", stationOn, accessPointOn, status.bWifiStaOn, status.bWifiApOn);
   bool turnStaOn = stationOn && !status.bWifiStaOn;
   bool turnApOn = accessPointOn && !status.bWifiApOn;
   if (turnStaOn || turnApOn){
@@ -4243,7 +4244,7 @@ void taskStandard(void *pvParameters){
   long frequency = FREQUENCY868;
   fanet.setRFMode(setting.RFMode);
   uint8_t radioChip = RADIO_SX1276;
-  if ((setting.boardType == eBoard::T_BEAM_SX1262) || (setting.boardType == eBoard::T_BEAM_S3CORE) || (setting.boardType == eBoard::HELTEC_WIRELESS_STICK_LITE_V3)) radioChip = RADIO_SX1262;
+  if (setting.boardType == T_BEAM_SX1262 || setting.boardType == T_BEAM_S3CORE || setting.boardType == HELTEC_WIRELESS_STICK_LITE_V3) radioChip = RADIO_SX1262;
 
   // When the requested Address type is ICAO then the devId of the device must be set to your mode-s address
   // See Flarm Dataport Specification for details
@@ -4271,13 +4272,9 @@ void taskStandard(void *pvParameters){
   fanet.setPilotname(setting.PilotName);
   fanet.setAircraftType(FanetLora::aircraft_t(setting.AircraftType));
   fanet.autoSendName = true;
-  if (setting.Mode == eMode::GROUND_STATION){
-    fanet.autobroadcast = false;
-  }else{
-    fanet.autobroadcast = true;
-  }
+  fanet.autobroadcast = setting.Mode != GROUND_STATION;
   setting.myDevId = fanet.getMyDevId();
-  host_name = APPNAME "-" + setting.myDevId; //String((ESP32_getChipId() & 0xFFFFFF), HEX);
+  host_name = APPNAME "-" + setting.myDevId;
   #ifdef AIRMODULE
   if (setting.Mode == eMode::AIR_MODULE){
     flarmDataPort.begin();
@@ -4313,7 +4310,7 @@ void taskStandard(void *pvParameters){
   while(1){    
     // put your main code here, to run repeatedly:
     uint32_t tAct = millis();
-    if ((bShowBattPower) && (bBatPowerOk)){
+    if (bShowBattPower && bBatPowerOk){
       //log_i("show batt-percent");
       userled.setBattPower(status.battery.percent);
       userled.setState(gxUserLed::showBattPower); //blink slow 1-5 times for batt-percent 0-100percent
