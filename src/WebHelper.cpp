@@ -59,10 +59,7 @@ void sendReceivers(uint8_t client_num){
   serializeJson(doc, msg_buf);
   webSocket.sendTXT(client_num, msg_buf);
   iIndex++;
-
 }
-
-
 
 void sendPageHeader(uint8_t client_num){
   StaticJsonDocument<400> doc;
