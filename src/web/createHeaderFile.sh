@@ -21,10 +21,7 @@ for i in orig/*.{css,js,html}; do
     gzip -k "${si}"
 done
 
-rm ../../data/*.*
-#cp stripped/*.html ../../data/
-#cp stripped/*.js ../../data/
-#cp stripped/*.css ../../data/
+find ../../data -type f -delete
 
 pushd stripped >/dev/null
 for i in *.gz; do
