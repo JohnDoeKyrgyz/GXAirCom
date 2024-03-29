@@ -3422,6 +3422,7 @@ void setWifi(bool stationOn, bool accessPointOn){
     else if (!turnOffAp && turnOffSta) wifiMode = WIFI_MODE_AP;
     WiFi.mode(wifiMode);
   }
+
   wifiCMD = 0;
 }
 
@@ -5163,7 +5164,7 @@ void taskBackGround(void *pvParameters){
   tGetTime = millis() - GETNTPINTERVALL + 5000; //we refresh NTP-Time 5 sec. after internet is connected
   while (true){
     uint32_t tAct = millis();
-    if  (status.wifiSTA.state != IDLE){
+    if (status.wifiAP.state != IDLE){
       Web_loop();
     }
 
