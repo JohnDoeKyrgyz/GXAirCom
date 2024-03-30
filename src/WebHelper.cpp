@@ -609,7 +609,7 @@ void onWebSocketEvent(uint8_t client_num,
         }else if (value == 3){
           //msg
           fanetString = doc["msg"].as<String>();
-          fanetReceiver = strtol( doc["receiver"].as<String>().c_str(), NULL, 16);
+          fanetReceiver = strtol( doc["receiver"].as<String>().c_str(), nullptr, 16);
           sendFanetData = value;          
         }else if (value == 4){
           //send fanet msgtype 4
@@ -642,7 +642,7 @@ void onWebSocketEvent(uint8_t client_num,
 }
 
 void SD_file_delete(AsyncWebServerRequest *request){
-  int paramsNr = request->params();
+  size_t paramsNr = request->params();
   for(int i=0;i<paramsNr;i++){
 
     AsyncWebParameter* p = request->getParam(i);
@@ -661,8 +661,7 @@ void SD_file_delete(AsyncWebServerRequest *request){
 }
 
 void SD_file_download(AsyncWebServerRequest *request){
-
-  int paramsNr = request->params();
+  size_t paramsNr = request->params();
   for(int i=0;i<paramsNr;i++){
 
     AsyncWebParameter* p = request->getParam(i);
@@ -708,23 +707,23 @@ String processor(const String& var){
   }else if (var == "NEIGHBOURS"){
     sRet = "";
     //sRet += "<option value=\"08AF88\">mytest 08AF88</option>\r\n";
-    for (int i = 0; i < MAXNEIGHBOURS; i++){
-      if (fanet.neighbours[i].devId){
-        sRet += "<option value=\"" + fanet.getDevId(fanet.neighbours[i].devId) + "\">";
-        if (fanet.neighbours[i].name.length() > 0){
-          sRet += fanet.neighbours[i].name;
+    for (auto & neighbour : fanet.neighbours){
+      if (neighbour.devId){
+        sRet += "<option value=\"" + fanet.getDevId(neighbour.devId) + "\">";
+        if (neighbour.name.length() > 0){
+          sRet += neighbour.name;
         }
-        sRet +=  " [" + fanet.getDevId(fanet.neighbours[i].devId) + "]</option>\r\n";
+        sRet +=  " [" + fanet.getDevId(neighbour.devId) + "]</option>\r\n";
         //sRet += "<option value=\"" + fanet.getDevId(fanet.neighbours[i].devId) + "\">" + fanet.neighbours[i].name + " " + fanet.getDevId(fanet.neighbours[i].devId) + "</option>\r\n";
       }
     }
-    for (int i = 0; i < MAXWEATHERDATAS; i++){
-      if (fanet.weatherDatas[i].devId){
-        sRet += "<option value=\"" + fanet.getDevId(fanet.weatherDatas[i].devId) + "\">";
-        if (fanet.weatherDatas[i].name.length() > 0){
-          sRet += fanet.weatherDatas[i].name;
+    for (auto & weatherData : fanet.weatherDatas){
+      if (weatherData.devId){
+        sRet += "<option value=\"" + fanet.getDevId(weatherData.devId) + "\">";
+        if (weatherData.name.length() > 0){
+          sRet += weatherData.name;
         }
-        sRet +=  " [" + fanet.getDevId(fanet.weatherDatas[i].devId) + "]</option>\r\n";
+        sRet +=  " [" + fanet.getDevId(weatherData.devId) + "]</option>\r\n";
       }
     }
     return sRet;
@@ -781,7 +780,7 @@ void loadFromSPIFFS(AsyncWebServerRequest *request,String path,String dataType =
   request->send(response);
 }
 #else
-void loadFromFlash(AsyncWebServerRequest *request,const uint8_t * content, size_t len,String dataType = "text/html") {
+void loadFromFlash(AsyncWebServerRequest *request,const uint8_t * content, size_t len, String dataType = "text/html") {
   AsyncWebServerResponse *response = request->beginResponse_P(200, dataType,content, len);
   response->addHeader("Content-Encoding", "gzip");
   request->send(response);   
@@ -789,8 +788,8 @@ void loadFromFlash(AsyncWebServerRequest *request,const uint8_t * content, size_
 #endif
 
 
-void Web_setup(void){
-  for (int i = 0;i < MAXCLIENTS;i++) clientPages[i] = 0;
+void Web_setup(){
+  for (unsigned char & clientPage : clientPages) clientPage = 0;
   // On HTTP request for root, provide index.html file
   server.on("/fwupdate", HTTP_GET, [](AsyncWebServerRequest *request){
     #ifdef useSpiffsWebsite      
@@ -926,7 +925,7 @@ void Web_setup(void){
   webSocket.onEvent(onWebSocketEvent);
 }
 
-void Web_stop(void){
+void Web_stop(){
   webSocket.close();
   server.end();
 }
@@ -998,7 +997,7 @@ void sendPage(uint8_t pageNr){
         counter++;
         time_t now;
         char strftime_buf[64];
-        struct tm timeinfo;
+        tm timeinfo;
         time(&now);
         gmtime_r(&now, &timeinfo);
         strftime(strftime_buf, sizeof(strftime_buf), "%F %T", &timeinfo);   

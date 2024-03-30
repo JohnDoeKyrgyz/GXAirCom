@@ -20,10 +20,10 @@ function wsConnect(url) {
   let websocket = new WebSocket(url);
   
   // Assign callbacks
-  websocket.onopen = evt => { onOpen(evt) };
-  websocket.onclose = evt => { onClose(evt) };
-  websocket.onmessage = evt => { onMessage(evt) };
-  websocket.onerror = evt => { onError(evt) };
+  websocket.onopen = onOpen;
+  websocket.onclose = onClose;
+  websocket.onmessage = onMessage;
+  websocket.onerror = onError;
 
   window.websocket = websocket;
 }
@@ -81,7 +81,7 @@ function onError(evt) {
 // Sends a message to the server (and prints it to the console)
 function doSend(message) {
   console.log("Sending: " + message);
-  websocket.send(message);
+  window.websocket.send(message);
 }
 
 // Call the init function as soon as the page loads
@@ -89,7 +89,7 @@ window.addEventListener("load", init, false);
 
 function getValue(obj,elements){
   elements.forEach(element => {
-    var e = document.getElementById(element);
+    const e = document.getElementById(element);
     //console.log("type=" + e.tagName);
     if (e.tagName === 'select-one'){
       //console.log("select " + element);

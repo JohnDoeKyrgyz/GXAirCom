@@ -6,10 +6,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>GXAirCom</title>
 <script language="javascript" type="text/javascript">
- var pageNumber = 10;
- var bHasVario = 0;
- var calibBtnState = 0;
- var wsMode = 0;
+ const pageNumber = 10;
+ let bHasVario = 0;
+ let calibBtnState = 0;
+ let wsMode = 0;
  const wsModeEn = 1;
  const wsModeBme = 2;
  const wsModeRain = 4;
@@ -19,7 +19,7 @@ function setFts(){
 }
 /*this function sets visible depending on actual option*/
 function setVis(){
-  if (calibBtnState == 0){
+  if (calibBtnState === 0){
     document.getElementById("accCalib1").style.display='none'; /*set calibration of ACC to invisible*/
     document.getElementById("accCalib2").style.display='none'; /*set calibration of ACC to invisible*/
     document.getElementById("accCalib3").style.display='none'; /*set calibration of ACC to invisible*/
@@ -54,14 +54,15 @@ function setVis(){
   document.getElementById("VisADS1015Exp").style.display='none';
   document.getElementById("VisADS1015").style.display='none'; //set ADS1015 settings invisible
   document.getElementById("VisWifiOff").style.display='none';  
-  if (document.getElementById("wificonnect").value != 2){
+  document.getElementById("VisWifiApOff").style.display='none';
+  if (document.getElementById("wificonnect").value !== 2){
     document.getElementById("VisWifiOff").style.display=''; //show wifi-off
   }
-  if (document.getElementById("setView").value == SETTING_EXPERT){ /*we are expert user*/
+  if (document.getElementById("setView").value === SETTING_EXPERT){ /*we are expert user*/
     document.getElementById("VisFrequ").style.display=''; /*set Frequency-settings visible*/
 
   }
-  if (document.getElementById("gsPs").value == 1){ /*set offset for sunset and sunrise visible */
+  if (document.getElementById("gsPs").value === 1){ /*set offset for sunset and sunrise visible */
     document.getElementById("VisGsSrO").style.display='';
     document.getElementById("VisGsSsO").style.display='';
   }  
@@ -76,7 +77,7 @@ function setVis(){
     document.getElementById("visSigmaP").style.display='';  
     document.getElementById("visSigmaA").style.display='';  
   }
-  if (document.getElementById("setView").value == SETTING_EXPERT){ /*we are expert*/
+  if (document.getElementById("setView").value === SETTING_EXPERT){ /*we are expert*/
     document.getElementById("visAxOffset").style.display='';
     document.getElementById("visAyOffset").style.display='';
     document.getElementById("visAzOffset").style.display='';
@@ -86,7 +87,7 @@ function setVis(){
     document.getElementById("visAccTemp1").style.display='';
     document.getElementById("visAccTemp2").style.display='';
   }    
-  if (document.getElementById("mode").value == 1){ /*mode ground-station*/
+  if (document.getElementById("mode").value === 1){ /*mode ground-station*/
     document.getElementById("VisOwnWs").style.display='';  /*enable Own weather-station  */
     if (wsMode & wsModeEn){
       document.getElementById("VisWD").style.display=''; /*set weather-data invisible*/
@@ -98,17 +99,17 @@ function setVis(){
       document.getElementById("VisWI").style.display=''; /*set windy upload invisible*/
       if (document.getElementById("setView").value >= SETTING_ADVANCED){ /*we are advanced or expert*/
         document.getElementById("VisAWUS").style.display=''; /*set advanced weather upload settings visible  */
-        if (document.getElementById("setView").value == SETTING_EXPERT){ /*we are expert user*/
+        if (document.getElementById("setView").value === SETTING_EXPERT){ /*we are expert user*/
           document.getElementById("VisAWFFNT").style.display=''; /*set advanced weather settings visible    */
         }
       }
       if (wsMode & wsModeBme){
         document.getElementById("VisWDBme").style.display='';  /*enable temp-correction for BME*/
       }
-      if (document.getElementById("wdAnemo").value == 2){
+      if (document.getElementById("wdAnemo").value === 2){
         document.getElementById("VisADS1015").style.display=''; //enable ADS1015 settings
       }
-      if ((document.getElementById("wdAnemo").value == 2) && (document.getElementById("setView").value == SETTING_EXPERT)){
+      if ((document.getElementById("wdAnemo").value === 2) && (document.getElementById("setView").value === SETTING_EXPERT)){
         document.getElementById("VisADS1015Exp").style.display=''; //enable ADS1015 expert-settings
       }    
     }else{
@@ -133,21 +134,21 @@ function setVis(){
     document.getElementById("VisGSUpload2").style.display='none'; /*set GS invisible*/
     document.getElementById("VisWU").style.display='none'; /*set weather-underground upload invisible*/
     document.getElementById("VisWI").style.display='none'; /*set windy upload invisible*/
-    if (bHasVario == 0){
+    if (bHasVario === 0){
       document.getElementById("VisVario").style.display='none';
     }else{
       document.getElementById("VisVario").style.display='';
     }
     document.getElementById("VisFuelSensor").style.display=''; /*set FuelSensor visible*/
   }
-  if (document.getElementById("output").value == 1){
+  if (document.getElementById("output").value === 1){
     document.getElementById("VisUdpIp").style.display='';
     document.getElementById("VisUdpPort").style.display='';
   }else{
     document.getElementById("VisUdpIp").style.display='none';
     document.getElementById("VisUdpPort").style.display='none';
   }
-  if (document.getElementById("wificonnect").value == 0){
+  if (document.getElementById("wificonnect").value === 0){
     document.getElementById("VisWifiSsid").style.display='none';
     document.getElementById("VisWifiPwd").style.display='none';
     document.getElementById("VisWifiApOff").style.display='none';
@@ -172,7 +173,7 @@ function setWsMode(){
 }
 
 function getWsMode(){
-  var Ret = 0;
+  let Ret = 0;
   if (document.getElementById("wdModeEnable").checked) Ret += 1;
   if (document.getElementById("wdModeHasBME").checked) Ret += 2;
   if (document.getElementById("wdModeRainSensor").checked) Ret += 4;
@@ -180,8 +181,8 @@ function getWsMode(){
 }
 
 function setCalibState(state){
-  var green = '#47c266';
-  var red = '#d43535';
+  const green = '#47c266';
+  const red = '#d43535';
   document.getElementById("Z1").bgColor = (state & 0x01) ? green : red;
   document.getElementById("Z2").bgColor = (state & 0x02) ? green : red;
   document.getElementById("Y1").bgColor = (state & 0x04) ? green : red;
@@ -191,7 +192,7 @@ function setCalibState(state){
 }
 
 function getRfMode(){
-  var Ret = 0;
+  let Ret = 0;
   if (document.getElementById("FntRx").checked) Ret += 1;
   if (document.getElementById("FntTx").checked) Ret += 2;
   if (document.getElementById("LegRx").checked) Ret += 4;
@@ -228,7 +229,7 @@ function setRfMode(mode){
 }
 
 function getMQTTMode(){
-  var Ret = 0;
+  let Ret = 0;
   if (document.getElementById("MqttEn").checked) Ret += 1;
   if (document.getElementById("MqttWd").checked) Ret += 2;
   return Ret;
@@ -236,47 +237,30 @@ function getMQTTMode(){
 
 function setMQTTMode(mode){
   console.log("setMQTTMode-Mode=" + mode);
-  e = document.getElementById("MqttEn");
-  if (mode & 1){
-    e.checked = true;
-  }else{
-    e.checked = false;
-  }
+  let e = document.getElementById("MqttEn");
+  e.checked = !!(mode & 1);
   e = document.getElementById("MqttWd");
-  if (mode & 2){
-    e.checked = true;
-  }else{
-    e.checked = false;
-  }
+  e.checked = !!(mode & 2);
 }
 
 
 function getWifiMode(){
-  var Ret = 0;
+  let Ret = 0;
   if (document.getElementById("wifiModeApOff").checked) Ret += 1;
-  if (document.getElementById("wifiEn").checked == false) Ret += 2;
-  
+  if (document.getElementById("wifiEn").checked === false) Ret += 2;
   return Ret;
 }
 
 function setWifiMode(mode){
   console.log("Wifi-Mode=" + mode);
-  e = document.getElementById("wifiModeApOff");
-  if (mode & 1){
-    e.checked = true;
-  }else{
-    e.checked = false;
-  }
+  let e = document.getElementById("wifiModeApOff");
+  e.checked = !!(mode & 1);
   e = document.getElementById("wifiEn");
-  if (mode & 2){
-    e.checked = false;
-  }else{
-    e.checked = true;
-  }  
+  e.checked = !!(mode & 2);  
 }
 
 function getOGNMode(){
-  var Ret = 0;
+  let Ret = 0;
   if (document.getElementById("ognlive").checked) Ret += 1;
   if (document.getElementById("ognWeather").checked) Ret += 2;
   if (document.getElementById("ognFwdWeather").checked) Ret += 4;
@@ -286,7 +270,7 @@ function getOGNMode(){
 
 function setOGNMode(mode){
   console.log("OGN-Mode=" + mode);
-  e = document.getElementById("ognlive");
+  let e = document.getElementById("ognlive");
   if (mode & 1){
     e.checked = true;
   }else{
@@ -313,7 +297,7 @@ function setOGNMode(mode){
 }
 
 function setBtnCalib(BtnId,state){
-  e = document.getElementById(BtnId);
+  let e = document.getElementById(BtnId);
   switch(state){
     case 0:
       e.innerText = "calib";
@@ -324,7 +308,7 @@ function setBtnCalib(BtnId,state){
     case 2:
       e.innerText = "calibration ready --> Board will reboot";
       document.getElementById("btnsave").innerText  = "rebooting ...";
-      var delay = 5000;
+      const delay = 5000;
       setTimeout( callMainPage, delay );
       break;
     case 10:
@@ -343,32 +327,32 @@ function setBtnCalib(BtnId,state){
 
 function calibGyro(){  
   setBtnCalib("btnCalibGyro",1);
-  var obj = {
-  calibGyro : 1
+  const obj = {
+    calibGyro: 1
   };
   doSend(JSON.stringify(obj));
 }
 
 function setBattVoltOffs(){
-  var obj = {
-    BATOFFS : Number(document.getElementById("BATOFFS").value)
+  const obj = {
+    BATOFFS: Number(document.getElementById("BATOFFS").value)
   };
   doSend(JSON.stringify(obj));
 
 }
 
-function calibAcc(){  
-  var value = 1;
-  if (calibBtnState == 10){
+function calibAcc(){
+  let value = 1;
+  if (calibBtnState === 10){
     value = 11;
   }
-  if (calibBtnState == 0){
+  if (calibBtnState === 0){
     setCalibState(0);
   }
   setBtnCalib("btnCalibAcc",value);
-  var obj = {
-    calibAcc : value
-  };  
+  const obj = {
+    calibAcc: value
+  };
   doSend(JSON.stringify(obj));
 }
 
@@ -385,7 +369,7 @@ function setBtnGPS(state){
     case 2:
       e.innerText = "GPS ready --> Board will reboot";
       document.getElementById("btnsave").innerText  = "rebooting ...";
-      var delay = 5000;
+      const delay = 5000;
       setTimeout( callMainPage, delay );
       break;
     case 255:
@@ -394,8 +378,6 @@ function setBtnGPS(state){
     default:
       break;
   }
-
-
 }
 
 function setBtnGetGpsPos(state){
@@ -413,7 +395,7 @@ function setBtnGetGpsPos(state){
     case 3:
       e.innerText = "GPS fix OK --> Board will reboot";
       document.getElementById("btnsave").innerText  = "rebooting ...";
-      var delay = 5000;
+      const delay = 5000;
       setTimeout( callMainPage, delay );
       break;
     case 255:
@@ -422,22 +404,20 @@ function setBtnGetGpsPos(state){
     default:
       break;
   }
-
-
 }
 
 function getGpsPos(){
   setBtnGetGpsPos(1);
-  var obj = {
-  getGpsPos : 1
+  const obj = {
+    getGpsPos: 1
   };
   doSend(JSON.stringify(obj));
 }
 
 function sendUbloxConfig(){
   setBtnGPS(1);
-  var obj = {
-  configGPS : 1
+  const obj = {
+    configGPS: 1
   };
   doSend(JSON.stringify(obj));
 }
@@ -447,15 +427,15 @@ function onlyLetters(str) {
  }
 
 function openGeoidCalc(){
-  var url = "https://geographiclib.sourceforge.io/cgi-bin/GeoidEval?input=" + document.getElementById("gslat").value + "+" + document.getElementById("gslon").value + "&option=Submit";
-  var win = window.open(url, '_blank');
+  const url = "https://geographiclib.sourceforge.io/cgi-bin/GeoidEval?input=" + document.getElementById("gslat").value + "+" + document.getElementById("gslon").value + "&option=Submit";
+  const win = window.open(url, '_blank');
   win.focus();
 }
 
 function checkValues(){
-  if (document.getElementById("mode").value == 1){ /*mode ground-station*/
-   var gsname =  document.getElementById("PilotName").value;
-   if ((gsname.length < 3) || (gsname.length > 9) || (!onlyLetters(gsname))){
+  if (document.getElementById("mode").value === 1){ /*mode ground-station*/
+    const gsname = document.getElementById("PilotName").value;
+    if ((gsname.length < 3) || (gsname.length > 9) || (!onlyLetters(gsname))){
     window.alert("Error Ground Station name\r\nMinimum length for name is 3 characters\r\nMaximum length for name is 9 characters\r\nUse chars and numbers only (A-Z, a-z and 0-9)");
     return false;
    }
@@ -489,8 +469,8 @@ function importJson(){
 function exportJson() {
 
 console.log("export JSON");
-var obj = {};
-getValue(obj,
+  const obj = {};
+  getValue(obj,
     [
     "setView",
     "board",
@@ -825,19 +805,19 @@ function sendValues(){
   );  
 
   document.getElementById("btnsave").innerText  = "rebooting ...";
-  var delay = 10000;
+  const delay = 10000;
   setTimeout( callMainPage, delay );
 }
 
 function parseJson(data){
-  var myObj = JSON.parse(data);
-  for (var key of Object.keys(myObj)) {
+  const myObj = JSON.parse(data);
+  for (let key of Object.keys(myObj)) {
     console.log(key + " -> " + myObj[key]);
     let isArray = Array.isArray(myObj[key]);
     if (Array.isArray(myObj[key])){
-      var i = 0;
-      for (var myValue of myObj[key]){
-        if ((key == "F2WuF") || (key == "F2WiF")){
+      let i = 0;
+      for (let myValue of myObj[key]){
+        if ((key === "F2WuF") || (key === "F2WiF")){
           myValue = FntIdDec2Hex(myValue);
         }
         document.getElementById(key + i).value = myValue;
@@ -846,62 +826,62 @@ function parseJson(data){
       }
       continue;
     }
-    if (key == "WsMode"){
+    if (key === "WsMode"){
       wsMode = myObj[key];
       continue;
     }
-    if (key == "bHasVario"){
+    if (key === "bHasVario"){
       bHasVario = myObj[key];
       continue;
-    }else if (key == "bHasMPU"){
-      if (myObj[key] == 0){
+    }else if (key === "bHasMPU"){
+      if (myObj[key] === 0){
         document.getElementById("VisMPU").style.display='none';
       }
       continue;
-    }else if (key == "bHasGSM"){
-      if (myObj[key] == 0){
+    }else if (key === "bHasGSM"){
+      if (myObj[key] === 0){
         document.getElementById("VisGSM").style.display='none';
       }
       continue;          
-    }else if (key == "configGPS"){
+    }else if (key === "configGPS"){
       setBtnGPS(myObj[key]);
       continue;    
-    }else if (key == "getGpsPos"){
+    }else if (key === "getGpsPos"){
       setBtnGetGpsPos(myObj[key]);
       continue;    
-    }else if (key == "calibGyro"){
+    }else if (key === "calibGyro"){
       setBtnCalib("btnCalibGyro",myObj[key]);
       continue;          
-    }else if (key == "RFM"){
+    }else if (key === "RFM"){
       setRfMode(myObj[key]);
       continue;
-    }else if (key == "ognlive"){
+    }else if (key === "ognlive"){
       setOGNMode(myObj[key]);
       continue;
-    }else if (key == "WIFI_MODE"){
+    }else if (key === "WIFI_MODE"){
       setWifiMode(myObj[key]);
       continue;      
-    }else if (key == "MqttMode"){
+    }else if (key === "MqttMode"){
       setMQTTMode(myObj[key]);
       continue;          
-    }else if (key == "calibAcc"){
+    }else if (key === "calibAcc"){
       calibBtnState = myObj[key];
       setBtnCalib("btnCalibAcc",myObj[key]);
       continue; 
-    }else if (key == "stateCalibAcc"){
+    }else if (key === "stateCalibAcc"){
       setCalibState(myObj[key]);
       continue;                    
-    }else if (key == "useMPU"){
-      if (myObj[key] == 0){
+    }else if (key === "useMPU"){
+      if (myObj[key] === 0){
         document.getElementById("VisMPU").style.display='none';
       }
     }
-    var e = document.getElementById(key);
+    const e = document.getElementById(key);
     if (e == null) continue;
     if (e instanceof HTMLSelectElement) {     /* <select>*/
       document.getElementById(key).value = myObj[key];
-    }else if ((e instanceof HTMLInputElement ) && (e.getAttribute('type') == 'checkbox')){     /* <input checkbox>*/
-      if (myObj[key] == 1){
+    }else if ((e instanceof HTMLInputElement ) && (e.getAttribute('type') === 'checkbox')){     /* <input checkbox>*/
+      if (myObj[key] === 1){
         document.getElementById(key).checked = true;
       }else{
         document.getElementById(key).checked = false;
@@ -939,7 +919,7 @@ function onMessage(evt) {
 </div>
 <fieldset>
 <legend><b>General settings</b></legend>
-<table style="width:100&#37;">
+<table style="width:100%">
 <tbody>
 <tr>
 <th>settings view</th>
@@ -1047,7 +1027,7 @@ function onMessage(evt) {
 <p></p>
 <fieldset>
       <legend><b>RF-Module settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>FANET RX (receiving Fanet-MSG)</th>
@@ -1083,7 +1063,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset>
       <legend><b>Open Glider Network (OGN)</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>send live-tracking</th>
@@ -1108,7 +1088,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset>
       <legend><b>Live tracking settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>airwhere live-tracking</th>
@@ -1132,7 +1112,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisOutputSettings">
       <legend><b>Output settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>output</th>
@@ -1185,7 +1165,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset>
       <legend><b>WIFI settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr><th>enable Wifi at startup</th><td><input type="checkbox" id="wifiEn" ></td></tr>
           <tr>
@@ -1214,6 +1194,17 @@ function onMessage(evt) {
               <option value="600">10min.</option>
             </select></td>
           </tr>
+          <tr>
+            <th>Wifi Access Point off</th>
+            <td><select id="wifiappoff">
+              <option value="0">always on</option>
+              <option value="60">1min.</option>
+              <option value="120">2min.</option>
+              <option value="180">3min.</option>
+              <option value="300">5min.</option>
+              <option value="600">10min.</option>
+            </select></td>
+          </tr>
           <tr id="VisWifiSsid">
             <th>WIFI SSID</th>
             <td><input type="text" id="ssid"></td>
@@ -1229,7 +1220,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisGS">
       <legend><b>Ground station settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>lat [DD.dddddd] (ground-station)</th>
@@ -1292,7 +1283,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisWD">
       <legend><b>Weather-Station settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>Anemometer</th>
@@ -1331,7 +1322,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisADS1015">
       <legend><b>ADS1015 related settings.</b> Set min/max Voltage to the same value to disable sensor.</legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>ADS1015 Gain</th>
@@ -1347,7 +1338,7 @@ function onMessage(evt) {
         </tbody>
       </table>
 
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th></th>
@@ -1378,7 +1369,7 @@ function onMessage(evt) {
       </table>
     </fieldset>
     <fieldset id="VisADS1015Exp">
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>ADS1015 expert settings</th>
@@ -1396,7 +1387,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisGSUpload1">
       <legend><b>Upload received Fanet weather-data to weather undergound</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>FANET-ID</th>
@@ -1435,7 +1426,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisGSUpload2">
       <legend><b>Upload received Fanet weather-data to windy</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>FANET-ID</th>
@@ -1474,7 +1465,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisMqtt">
       <legend><b>MQTT settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>enable</th>
@@ -1503,7 +1494,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisAWFFNT">
       <legend><b>FANET Weather settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>FANET average-coefficient (default 16)</th>
@@ -1520,7 +1511,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisAWUS">
       <legend><b>Weather Upload settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>average-coefficient (default 128)</th>
@@ -1537,7 +1528,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisWU">
       <legend id="tWu"><b>Weather Underground Upload</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th id="tWu2">enable sending weather-data to WU</th>
@@ -1558,7 +1549,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisWI">
       <legend id="tWi"><b>windy Upload</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th id="tWi2">enable sending weather-data to windy</th>
@@ -1579,7 +1570,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisVario">
       <legend><b>Vario settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
             <th>climbing threshold [m/s]</th>
             <td><input type="number" id="vClimbTh" step=".01"></td>
@@ -1626,7 +1617,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisMPU">
       <legend><b>accelerometer settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>acc-sensor</th>
@@ -1679,7 +1670,7 @@ function onMessage(evt) {
     <p></p>
     <fieldset id="VisGSM">
       <legend><b>GSM settings</b></legend>
-      <table style="width:100&#37;">
+      <table style="width:100%">
         <tbody>
           <tr>
             <th>APN</th>
@@ -1724,7 +1715,7 @@ function onMessage(evt) {
     </fieldset>
     <p></p>
     <p></p>
-    <table style="width:100&#37;">
+    <table style="width:100%">
       <tr>
         <td style="width:50&#37;">
           <button id="btnsaveSettings" onClick="exportJson()">save settings to file</button>
@@ -1737,18 +1728,18 @@ function onMessage(evt) {
     </table>
     <p></p>
     <p></p>
-    <table style="width:100&#37;">
+    <table style="width:100%">
       <tr>
-        <td style="width:100&#37;">
+        <td style="width:100%">
           <button id="btnsave" onClick="sendValues()" class="button bgrn">save settings on board and reboot</button>
         </td>
       </tr>
     </table>
     <p></p>
     <p></p>
-    <table style="width:100&#37;">
+    <table style="width:100%">
       <tr>
-        <td style="width:100&#37;">
+        <td style="width:100%">
           <button onClick="location.href='/index.html'">main menu</button>
         </td>
       </tr>

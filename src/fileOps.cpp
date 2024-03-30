@@ -8,7 +8,7 @@ void load_configFile(SettingsData* pSetting){
   preferences.begin("settings", false);
   pSetting->settingsView = preferences.getUChar(KEY_SETVIEW,0);
   pSetting->wifi.appw = preferences.getString(KEY_ACESSPOINT_PASSWORD,"12345678");
-  pSetting->boardType = eBoard(preferences.getUChar(KEY_BOARDTYPE,UNKNOWN));
+  pSetting->boardType = eBoard(preferences.getUChar(KEY_BOARD,UNKNOWN));
   pSetting->CPUFrequency = preferences.getUChar(KEY_CPUFREQU,240);
   pSetting->bHasExtPowerSw = preferences.getUChar(KEY_EXTPWSW,0);//external power-switch
   pSetting->RFMode = preferences.getUChar(KEY_RFM,11);//default FntRx + FntTx + LegTx
@@ -172,7 +172,7 @@ void write_configFile(SettingsData* pSetting){
   preferences.begin("settings", false);
   preferences.putUChar(KEY_SETVIEW,pSetting->settingsView);
   preferences.putString(KEY_ACESSPOINT_PASSWORD,pSetting->wifi.appw);
-  preferences.putUChar(KEY_BOARDTYPE,pSetting->boardType);
+  preferences.putUChar(KEY_BOARD,pSetting->boardType);
   preferences.putUChar(KEY_CPUFREQU,pSetting->CPUFrequency);
   preferences.putUChar(KEY_EXTPWSW,pSetting->bHasExtPowerSw);
   preferences.putUChar(KEY_RFM,pSetting->RFMode);
