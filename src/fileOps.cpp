@@ -27,8 +27,8 @@ void load_configFile(SettingsData* pSetting){
   pSetting->wifi.connect = eWifiMode(preferences.getUChar(KEY_WIFI_CONNECT,CONNECT_NONE));
   pSetting->wifi.ssid = preferences.getString(KEY_WIFI_SSID,"");
   pSetting->wifi.password = preferences.getString(KEY_WIFI_PW,"");
-  pSetting->wifi.tWifiStaStop = preferences.getUInt(KEY_WIFISTA_STOP,0); //stop wifi station after seconds.
-  pSetting->wifi.tWifiApStop = preferences.getUInt(KEY_WIFIAP_STOP,180); //stop wifi access point after seconds.
+  pSetting->wifi.tWifiStaStop = preferences.getUInt(KEY_WIFI_STA_STOP,0); //stop wifi station after seconds.
+  pSetting->wifi.tWifiApStop = preferences.getUInt(KEY_WIFI_AP_STOP,180); //stop wifi access point after seconds.
   pSetting->AircraftType = preferences.getUChar(KEY_AIRCRAFTTYPE,1);
   pSetting->UDPServerIP = preferences.getString(KEY_UDP_SERVER,"192.168.4.2"); //UDP-IP-Adress to match connected device
   pSetting->UDPSendPort = preferences.getUInt(KEY_UDP_PORT,10110); //Port of udp-server
