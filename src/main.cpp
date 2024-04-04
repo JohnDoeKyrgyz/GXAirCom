@@ -2133,10 +2133,6 @@ void setup() {
     PinBeaconLed = 25;
 #endif
     sButton[0].PinButton = 0; //pin for program-button
-    
-    //PinGPSRX = 34;
-    //PinGPSTX = 39;
-
 
     PinLoraRst = 14;
     PinLoraDI0 = 26;
@@ -2821,8 +2817,7 @@ void taskWeather(void *pvParameters){
       //station has BME --> we are a weather-station
       weather.run();
       if (weather.getValues(&wData)){
-        //log_i("wdata:wDir=%f;wSpeed=%f,temp=%f,h=%f,p=%f",wData.WindDir,wData.WindSpeed,wData.temp,wData.Humidity,wData.Pressure);
-        //if ((status.weather.vaneVAlue != wData.vaneValue) || (wData.vaneValue < 1023)){ //we check, if analog-value is changing, when there is an error, we get always 1023 for analog-read
+        log_i("wdata:wDir=%f;wSpeed=%f,temp=%f,h=%f,p=%f",wData.WindDir,wData.WindSpeed,wData.temp,wData.Humidity,wData.Pressure);
         if ((wData.vaneValue != 0x03FF) || (setting.wd.anemometer.AnemometerType != eAnemometer::DAVIS)){ //0x03FF=1023 we check, if analog-value is changing, when there is an error, we get always 1023 for analog-read
           tWindOk = tAct;
           status.weather.error.bits.VanevalueInvalid = false;
@@ -4921,7 +4916,7 @@ void powerOff(){
       delay(500); //wait 500ms
     }
     uint64_t mask = uint64_t(1) << uint64_t(sButton[0].PinButton); //prg-Button has a pull-up-resistor --> Pin has to go low, if pressed
-    esp_sleep_enable_ext1_wakeup(mask,ESP_EXT1_WAKEUP_ALL_LOW); //wait until power is back again
+    esp_sleep_enable_ext1_wakeup(mask,ESP_EXT1_WAKEUP_ANY_LOW); //wait until power is back again
   }
   if (PinExtPowerOnOff >= 0){
     if (!digitalRead(PinExtPowerOnOff)){
