@@ -26,7 +26,8 @@ enum ePMU {
 /* aneometer */
 enum eAnemometer {
     DAVIS = 0,
-    SPARKFUN_WEATHERKIT = 4
+    SPARKFUN_WEATHERKIT = 4,
+    VOLTAGE_DIVIDER_BASED = 5
 };
 
 /* Mode of operation */
