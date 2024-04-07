@@ -1940,7 +1940,6 @@ void setup() {
     PinBaroSDA = 13;
     PinBaroSCL = 14;
 
-
     //V3.0.0 changed from PIN 0 to PIN 25
     PinBuzzer = 25;
 
@@ -2014,7 +2013,6 @@ void setup() {
     //PinGPSTX = 39;
     PinGPSRX = 12;
     //PinGPSTX = 15; // no GPS-TX
-
 
     PinLoraRst = 14;
     PinLoraDI0 = 26;
@@ -2127,16 +2125,18 @@ void setup() {
     PinExtPower = 21;
     break;
   case eBoard::HELTEC_WIRELESS_PAPER:
-      log_i("Board=HELTEC Wireless Paper");
-      sButton[0].PinButton = 0; //pin for program-button
+    log_i("Board=HELTEC Wireless Paper");
+    sButton[0].PinButton = 0; //pin for program-button
 
-      PinLoraRst = 14;
-      PinLoraDI0 = 26;
-      PinLora_SS = 18;
-      PinLora_MISO = 19;
-      PinLora_MOSI = 27;
-      PinLora_SCK = 5;
-      break;
+    PinLoraRst = 14;
+    PinLoraDI0 = 26;
+    PinLora_SS = 18;
+    PinLora_MISO = 19;
+    PinLora_MOSI = 27;
+    PinLora_SCK = 5;
+
+    PinExtPower = 21;
+  break;
   case eBoard::TTGO_TSIM_7000:
     log_i("Board=TTGO_TSIM_7000");
 
