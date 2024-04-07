@@ -196,7 +196,13 @@ SCL 14
 #define WIFI_RECONNECT_TIME 300000 //5min.
 #define MQTT_RESET_TIME 600000
 
+#define NUMBUTTONS
+#ifdef WIRELESS_PAPER
+#define NUMBUTTONS 1
+#else
 #define NUMBUTTONS 2
+#endif
+
 //#define BUTTON2 38
 #define LONGPRESSTIME 250
 

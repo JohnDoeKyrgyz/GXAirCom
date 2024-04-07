@@ -609,14 +609,6 @@ void checkBoardType(){
     delay(1000);
     esp_restart(); //we need to restart
   #endif
-  #ifdef WIRELESS_PAPER
-    setting.displayType = EINK2_9_V2;
-    setting.boardType = eBoard::HELTEC_WIRELESS_PAPER;
-    log_i("Wireless Paper Found");
-    write_configFile(&setting);
-    delay(1000);
-    esp_restart(); //we need to restart
-  #endif
   log_i("start checking board-type");  
   PinOledSDA = 21;
   PinOledSCL = 22;
@@ -1748,7 +1740,7 @@ void setup() {
     setting.CPUFrequency = 80;
   }
   #else
-  if (setting.CPUFrequency <  20){
+  if (setting.CPUFrequency < 20){
     setting.CPUFrequency = 20;
   }  
   #endif
@@ -1766,6 +1758,10 @@ void setup() {
   #endif
   #ifdef WIRELESS_STICK_V3
     setting.boardType = HELTEC_WIRELESS_STICK_LITE_V3;
+  #endif
+  #ifdef WIRELESS_PAPER
+    setting.boardType = HELTEC_WIRELESS_PAPER;
+    setting.displayType = EINK2_9_V2;
   #endif
   if (setting.boardType == eBoard::UNKNOWN){
     checkBoardType();
@@ -1852,9 +1848,9 @@ void setup() {
   //NOTE the SparkFun WeatherMeter relies on 12 bit ADC resolution.
 //  analogReadResolution(10); // Default of 12 is not very linear. Recommended to use 10 or 11 depending on needed resolution.
   status.PMU = ePMU::NOPMU;
-  for (uint8_t i = 0; i < NUMBUTTONS; i++) {
+  for (auto & i : sButton) {
     //init buttons
-    sButton[i].PinButton = -1;
+    i.PinButton = -1;
   }
 
   #ifdef TEST
@@ -2012,33 +2008,6 @@ void setup() {
       PinWindSpeed = 39;
     }    
     break;
-  /*
-  case BOARD_TTGO_T3_V1_6:
-    log_i("Board=TTGO_T3_V1_6");
-    PinLoraRst = 23;
-    PinLoraDI0 = 26;
-    PinLora_SS = 18;
-    PinLora_MISO = 19;
-    PinLora_MOSI = 27;
-    PinLora_SCK = 5;
-
-    PinOledRst = -1;
-    PinOledSDA = 21;
-    PinOledSCL = 22;
-
-    PinBaroSDA = 13;
-    PinBaroSCL = 14;
-
-
-    PinBuzzer = 0;
-
-    pI2cOne->begin(PinOledSDA, PinOledSCL);
-    // voltage-divier 100kOhm and 100kOhm
-    // vIn = (R1+R2)/R2 * VOut
-    PinADCVoltage = 35;
-    adcVoltageMultiplier = 2.5f; // not sure if it is ok ?? don't have this kind of board
-    break;
-  */
   case eBoard::HELTEC_LORA:
     log_i("Board=HELTEC_LORA");
     //PinGPSRX = 34;
@@ -2079,13 +2048,10 @@ void setup() {
       PinPPS = 37;
     #endif
 
-    
     if (setting.bHasFuelSensor){
       PinFuelSensor = 39;
       pinMode(PinFuelSensor, INPUT);
-    }    
-
-
+    }
 
     sButton[0].PinButton = 0; //pin for program-Led
     //PinButton[0] = 0; //pin for Program-Led
