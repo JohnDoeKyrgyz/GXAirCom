@@ -25,8 +25,8 @@
 #include <ArduinoHttpClient.h>
 
 #include "esp_system.h"
-#include "esp_spi_flash.h"
-#include "driver/adc.h"
+//#include "esp_spi_flash.h"
+//#include "driver/adc.h"
 //#include "Update.h"
 #include "gxUpdater.h"
 #include "gxUserLed.h"
@@ -119,6 +119,8 @@ SemaphoreHandle_t xI2C0Mutex;
 SemaphoreHandle_t *PMUMutex = NULL;
 
 #include <MicroNMEA.h>
+#include <cstring>
+
 #ifdef AIRMODULE
 //Libraries for Vario
 #include <Baro.h>
@@ -358,7 +360,6 @@ void taskBluetooth(void *pvParameters);
 #endif
 void taskMemory(void *pvParameters);
 void setupWifi();
-void IRAM_ATTR ppsHandler();
 void printSettings();
 void listSpiffsFiles();
 String setStringSize(String s,uint8_t sLen);
@@ -394,9 +395,14 @@ void sendFanetWeatherData2WU(FanetLora::weatherData *weatherData,uint8_t wuIndex
 void sendFanetWeatherData2WI(FanetLora::weatherData *weatherData,uint8_t wiIndex);
 #endif
 #ifdef AIRMODULE
-bool setupUbloxConfig(void);
-bool setupQuetelGps(void);
+bool setupUbloxConfig();
+bool setupQuetelGps();
 #endif
+
+void IRAM_ATTR ppsHandler(){
+    gtPPS = millis();
+    ppsTriggered = true;
+}
 
 constexpr uint32_t commonBaudRates[] = {9600, 19200, 38400, 57600, 115200};
 constexpr uint8_t  commonBaudRatesSize = sizeof(commonBaudRates) / sizeof(commonBaudRates[0]);
@@ -603,6 +609,14 @@ void checkBoardType(){
     delay(1000);
     esp_restart(); //we need to restart
   #endif
+  #ifdef WIRELESS_PAPER
+    setting.displayType = EINK2_9_V2;
+    setting.boardType = eBoard::HELTEC_WIRELESS_PAPER;
+    log_i("Wireless Paper Found");
+    write_configFile(&setting);
+    delay(1000);
+    esp_restart(); //we need to restart
+  #endif
   log_i("start checking board-type");  
   PinOledSDA = 21;
   PinOledSCL = 22;
@@ -668,7 +682,6 @@ void checkBoardType(){
   write_configFile(&setting);
   delay(1000);
   esp_restart(); //we need to restart
-
 }
 
 void add2OutputString(String s){
@@ -692,18 +705,17 @@ void setAllTime(tm &timeinfo){
   settimeofday((const timeval*)&epoch, 0); //set time on RTC of ESP32
 }
 
-void printChipInfo(void){
-  esp_chip_info_t chip_info;
-  esp_chip_info(&chip_info);
-  log_i("This is ESP32 chip with %d CPU cores, WiFi%s%s, ",
-          chip_info.cores,
-          (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
-          (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
-  log_i("silicon revision %d, ", chip_info.revision);
-  log_i("%dMB %s flash", spi_flash_get_chip_size() / (1024 * 1024),
-          (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
+void printChipInfo(){
+//  esp_chip_info_t chip_info;
+//  esp_chip_info(&chip_info);
+//  log_i("This is ESP32 chip with %d CPU cores, WiFi%s%s, ",
+//          chip_info.cores,
+//          (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
+//          (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
+//  log_i("silicon revision %d, ", chip_info.revision);
+//  log_i("%dMB %s flash", spi_flash_get_chip_size() / (1024 * 1024),
+//          (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
 }
-
 
 bool printLocalTime()
 {
@@ -1276,11 +1288,6 @@ void setupPMU(){
   }
 }
 
-void IRAM_ATTR ppsHandler(){
-  gtPPS = millis();
-  ppsTriggered = true;
-}
-
 void WiFiEvent(WiFiEvent_t event){
   switch(event){
     case ARDUINO_EVENT_WIFI_READY:
@@ -1485,7 +1492,7 @@ esp_sleep_wakeup_cause_t print_wakeup_reason(){
 }
 
 /*
-void startBluetooth(void){
+void startBluetooth(){
   if (setting.outputMode == OUTPUT_BLE){
     esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
     esp_bt_controller_enable(ESP_BT_MODE_BLE);    
@@ -2095,11 +2102,9 @@ void setup() {
 #ifdef AIRMODULE
     PinBeaconLed = 25;
 #endif
-
     PinGPSRX = 9;
     PinGPSTX = 10;
     PinPPS = 23;
-
 
     PinLoraRst = 14;
     PinLoraDI0 = 26;
@@ -2111,8 +2116,7 @@ void setup() {
     PinBaroSDA = 32;
     PinBaroSCL = 33;
 
-    //PinOneWire = 22;    
-
+    //PinOneWire = 22;
     PinWindDir = 36;
     PinWindSpeed = 39;
     PinRainGauge = 38;
@@ -2156,6 +2160,17 @@ void setup() {
 
     PinExtPower = 21;
     break;
+  case eBoard::HELTEC_WIRELESS_PAPER:
+      log_i("Board=HELTEC Wireless Paper");
+      sButton[0].PinButton = 0; //pin for program-button
+
+      PinLoraRst = 14;
+      PinLoraDI0 = 26;
+      PinLora_SS = 18;
+      PinLora_MISO = 19;
+      PinLora_MOSI = 27;
+      PinLora_SCK = 5;
+      break;
   case eBoard::TTGO_TSIM_7000:
     log_i("Board=TTGO_TSIM_7000");
 
@@ -2166,7 +2181,6 @@ void setup() {
     PinEink_Cs     =  13;
     PinEink_Clk    =  14;
     PinEink_Din    =  2;
-
 
     PinLoraRst = 12;
     PinLoraDI0 = 32;
@@ -2193,13 +2207,11 @@ void setup() {
     }else{
       PinOneWire = 25;    
     }
-    
 
     PinWindDir = 33;
     PinWindSpeed = 34;
     PinRainGauge = 39;
 
-    
     //PinUserLed = 12; //PinLoraRst
     
     PinBuzzer = 0;
@@ -2265,13 +2277,6 @@ void setup() {
     PinPMU_Irq = 40;
     PinBuzzer = 48;
     setupPMU();
-    /*
-    pI2cZero->begin(PinBaroSDA, PinBaroSCL);
-    while(1){
-      i2cScanner();
-      delay(5000);
-    }
-    */
 
     break;
   case eBoard::HELTEC_WIRELESS_STICK_LITE_V3:
@@ -2332,7 +2337,6 @@ void setup() {
   buttonConfig->setLongPressDelay(1000); //set long-press-delay to 500ms
   buttonConfig->setClickDelay(500); //set click-delay to 200ms
 
-
   if (PinBeaconLed >= 0) {
     pinMode(PinBeaconLed, OUTPUT);
     digitalWrite(PinBeaconLed,LOW); 
@@ -2383,7 +2387,6 @@ void setup() {
     }
   }
   #endif
-
 
   // setting.myDevId = ""; //MyDevID is now stored on file because it's used together with the addressType
 #ifdef GSM_MODULE
@@ -3440,7 +3443,6 @@ size_t getNextString(char *ch_str,char *pSearch,char *buffer, size_t sizeBuffer)
   }else{
     return 0;
   }
-  
 }
 
 void checkSystemCmd(const char *ch_str){
@@ -3663,7 +3665,6 @@ void checkSystemCmd(const char *ch_str){
     status.updateState = 60; //check for Update automatic
     add2OutputString("#SYC UPDATE NEW VERSION\r\n");
   }
-  return;
 }
 
 
@@ -3964,7 +3965,7 @@ bool sendCmd2NMEA(const char* s,const char* sRet){
   return false;
 }
 
-bool setupQuetelGps(void){
+bool setupQuetelGps(){
   log_e("************ config GPS *************");
   if (sendCmd2NMEA("$PQTXT,W,0,0","$PQTXT,W,OK*0A")){ //set GPTXT to off
     //we got response --> Quetel-chip
