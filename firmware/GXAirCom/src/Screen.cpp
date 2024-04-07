@@ -1,12 +1,11 @@
 /*!
  * @file Screen.cpp
- *
- *
  */
 
 #include "Screen.h"
 #include "tools.h"
 #include <icons.h>
+#include <qrcode.h>
 
 
 //GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> e_ink(GxEPD2_290(EINK_CS, EINK_DC, EINK_RST, EINK_BUSY));
@@ -43,7 +42,7 @@ bool Screen::begin(uint8_t type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,int8_
   return true;
 }
 
-void Screen::end(void){
+void Screen::end(){
   if (setting.displayRotation <= 1){
     pEInk->setRotation(1);
   }else{
@@ -71,7 +70,7 @@ void Screen::end(void){
 
 }
 
-void Screen::run(void){
+void Screen::run(){
   //bInit = true;
   if (!bInit){
     doInitScreen();
@@ -84,7 +83,7 @@ void Screen::run(void){
   }
 }
 
-void Screen::doInitScreen(void){
+void Screen::doInitScreen(){
   static uint32_t tTimeStamp = millis();
   static uint8_t step = 0;
   uint32_t tAct = millis();
@@ -285,7 +284,7 @@ void Screen::getTextPositions(int16_t *posx, int16_t *posy,int16_t x, int16_t y,
   //log_i("%s x=%d,y=%d,w=%d,h=%d,tbx=%d,tby=%d,tbw=%d,tbh=%d,posx=%d,posy=%d",sText.c_str(),x,y,width,height,tbx, tby, tbw, tbh,*posx,*posy);
 }
 
-void Screen::drawWeatherScreen(void){
+void Screen::drawWeatherScreen(){
   uint32_t tAct = millis();
   //static uint32_t tOldUpate = millis();
   int16_t posx = 0;
@@ -392,7 +391,6 @@ void Screen::drawWeatherScreen(void){
         pEInk->setCursor(posx,posy);
         pEInk->print(sDir);
         pEInk->drawFastHLine(0,80,pEInk->width(),GxEPD_BLACK);
-
 
         //Wind-Speed /gust
         pEInk->setFont(&NotoSans6pt7b);
@@ -519,7 +517,7 @@ void Screen::drawWeatherScreen(void){
   }
 }
 
-void Screen::drawMainScreen(void){
+void Screen::drawMainScreen(){
   uint32_t tAct = millis();
   //static uint32_t tOldUpate = millis();
   int16_t posx = 0;
@@ -892,7 +890,7 @@ void Screen::drawFlightTime(int16_t x, int16_t y, int16_t width, int16_t height,
     }
 }
 
-void Screen::webUpdate(void){
+void Screen::webUpdate(){
     if (setting.displayRotation <= 1){
       pEInk->setRotation(1);
     }else{

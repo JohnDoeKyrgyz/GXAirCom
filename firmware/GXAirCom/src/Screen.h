@@ -42,15 +42,15 @@ class Screen {
 public:
   Screen(); //constructor
   bool begin(uint8_t type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,int8_t clk, int8_t din);
-  void end(void);
-  void run(void); //has to be called cyclic
-  void webUpdate(void);
+  void end();
+  void run(); //has to be called cyclic
+  void webUpdate();
 
 private:
   bool bInit;
-  void doInitScreen(void);
-  void drawMainScreen(void);
-  void drawWeatherScreen(void);
+  void doInitScreen();
+  void drawMainScreen();
+  void drawWeatherScreen();
   void drawFlightTime(int16_t x, int16_t y, int16_t width, int16_t height,uint32_t tTime);
   void drawValue(int16_t x, int16_t y, int16_t width, int16_t height,float value,unsigned int decimals);
   void drawCompass(int16_t x, int16_t y, int16_t width, int16_t height,float value);
