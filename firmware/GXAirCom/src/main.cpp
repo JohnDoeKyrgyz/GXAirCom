@@ -706,15 +706,15 @@ void setAllTime(tm &timeinfo){
 }
 
 void printChipInfo(){
-//  esp_chip_info_t chip_info;
-//  esp_chip_info(&chip_info);
-//  log_i("This is ESP32 chip with %d CPU cores, WiFi%s%s, ",
-//          chip_info.cores,
-//          (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
-//          (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
-//  log_i("silicon revision %d, ", chip_info.revision);
-//  log_i("%dMB %s flash", spi_flash_get_chip_size() / (1024 * 1024),
-//          (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
+  esp_chip_info_t chip_info;
+  esp_chip_info(&chip_info);
+  log_i("This is ESP32 chip with %d CPU cores, WiFi%s%s, ",
+          chip_info.cores,
+          (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
+          (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
+  log_i("silicon revision %d, ", chip_info.revision);
+  log_i("%dMB %s flash", spi_flash_get_chip_size() / (1024 * 1024),
+          (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
 }
 
 bool printLocalTime()
