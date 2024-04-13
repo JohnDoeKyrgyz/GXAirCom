@@ -51,7 +51,7 @@ bool FanetLora::begin(int8_t sck, int8_t miso, int8_t mosi, int8_t ss,int8_t res
   }
 
   fmac.setRfMode(_RfMode);
-  bool bRet = fmac.begin(sck, miso, mosi, ss, reset, dio0,gpio,*fa,frequency,outputPower,radio);
+  bool radioInitialized = fmac.begin(sck, miso, mosi, ss, reset, dio0, gpio, *fa, frequency, outputPower, radio);
   _myData.devId = ((uint32_t)fmac.myAddr.manufacturer << 16) + (uint32_t)fmac.myAddr.id;
   
   // init Flarm-Data
@@ -70,12 +70,10 @@ bool FanetLora::begin(int8_t sck, int8_t miso, int8_t mosi, int8_t ss,int8_t res
   flarmAircraftState.gps = &flarmGpsData;
   flarm_init_aircraft_state(&flarmAircraftState);
   log_i("myDevId:%02X%04X",fmac.myAddr.manufacturer,fmac.myAddr.id);
-  if (!bRet){
+  if (!radioInitialized){
     log_e("radio failed");
-    return false;
   }
-
-  return true;
+  return radioInitialized;
 }
 
 void FanetLora::setGPS(bool bHasGps){
