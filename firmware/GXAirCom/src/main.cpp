@@ -37,6 +37,10 @@
 #include "XPowersLib.h"
 #include "TimeDefs.h"
 
+#if defined(WIRELESS_PAPER)
+#include <driver/board-config.h>
+#include "ESP32_Mcu.h"
+#endif
 XPowersLibInterface *PMU = NULL;
 
 //#define GXTEST
@@ -2124,19 +2128,28 @@ void setup() {
 
     PinExtPower = 21;
     break;
+#ifdef WIRELESS_PAPER
   case eBoard::HELTEC_WIRELESS_PAPER:
     log_i("Board=HELTEC Wireless Paper");
     sButton[0].PinButton = 0; //pin for program-button
 
-    PinLoraRst = 14;
-    PinLoraDI0 = 26;
-    PinLora_SS = 18;
-    PinLora_MISO = 19;
-    PinLora_MOSI = 27;
-    PinLora_SCK = 5;
+    Mcu.begin(HELTEC_BOARD,SLOW_CLK_TPYE);
+    PinLoraRst = RADIO_RESET;
+    PinLoraDI0 = RADIO_DIO_1;
+    PinLora_SS = RADIO_NSS;
+    PinLora_MISO = LORA_MISO;
+    PinLora_MOSI = LORA_MOSI;
+    PinLora_SCK = LORA_CLK;
+//          PinLoraRst = 14;
+//          PinLoraDI0 = 26;
+//          PinLora_SS = 18;
+//          PinLora_MISO = 19;
+//          PinLora_MOSI = 27;
+//          PinLora_SCK = 5;
 
-    PinExtPower = 21;
+    PinExtPower = 45;
   break;
+#endif
   case eBoard::TTGO_TSIM_7000:
     log_i("Board=TTGO_TSIM_7000");
 
@@ -4207,7 +4220,10 @@ void taskStandard(void *pvParameters){
   long frequency = FREQUENCY868;
   fanet.setRFMode(setting.RFMode);
   uint8_t radioChip = RADIO_SX1276;
-  if (setting.boardType == T_BEAM_SX1262 || setting.boardType == T_BEAM_S3CORE || setting.boardType == HELTEC_WIRELESS_STICK_LITE_V3) radioChip = RADIO_SX1262;
+  if (setting.boardType == T_BEAM_SX1262
+      || setting.boardType == T_BEAM_S3CORE
+      || setting.boardType == HELTEC_WIRELESS_STICK_LITE_V3
+      || setting.boardType == HELTEC_WIRELESS_PAPER) radioChip = RADIO_SX1262;
 
   // When the requested Address type is ICAO then the devId of the device must be set to your mode-s address
   // See Flarm Dataport Specification for details
