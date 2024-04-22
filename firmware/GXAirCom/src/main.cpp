@@ -1764,7 +1764,7 @@ void setup() {
     setting.boardType = HELTEC_WIRELESS_STICK_LITE_V3;
   #endif
   #ifdef WIRELESS_PAPER
-    setting.boardType = HELTEC_WIRELESS_PAPER;
+    setting.boardType = HELTEC_WIRELESS_PAPER_V1_1;
     setting.displayType = EINK2_9_V2;
   #endif
   if (setting.boardType == eBoard::UNKNOWN){
@@ -2129,17 +2129,17 @@ void setup() {
     PinExtPower = 21;
     break;
 #ifdef WIRELESS_PAPER
-  case eBoard::HELTEC_WIRELESS_PAPER:
+  case eBoard::HELTEC_WIRELESS_PAPER_V1_1:
     log_i("Board=HELTEC Wireless Paper");
     sButton[0].PinButton = 0; //pin for program-button
 
-    Mcu.begin(HELTEC_BOARD,SLOW_CLK_TPYE);
     PinLoraRst = RADIO_RESET;
     PinLoraDI0 = RADIO_DIO_1;
     PinLora_SS = RADIO_NSS;
     PinLora_MISO = LORA_MISO;
     PinLora_MOSI = LORA_MOSI;
     PinLora_SCK = LORA_CLK;
+    Mcu.begin(HELTEC_BOARD,SLOW_CLK_TPYE);
 //          PinLoraRst = 14;
 //          PinLoraDI0 = 26;
 //          PinLora_SS = 18;
@@ -4223,7 +4223,7 @@ void taskStandard(void *pvParameters){
   if (setting.boardType == T_BEAM_SX1262
       || setting.boardType == T_BEAM_S3CORE
       || setting.boardType == HELTEC_WIRELESS_STICK_LITE_V3
-      || setting.boardType == HELTEC_WIRELESS_PAPER) radioChip = RADIO_SX1262;
+      || setting.boardType == HELTEC_WIRELESS_PAPER_V1_1) radioChip = RADIO_SX1262;
 
   // When the requested Address type is ICAO then the devId of the device must be set to your mode-s address
   // See Flarm Dataport Specification for details
