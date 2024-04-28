@@ -2136,9 +2136,9 @@ void setup() {
     #endif
     sButton[0].PinButton = 0; //pin for program-button
 
-    //DIO_1 14, NSS 8, RESET 12, CLK 9, MISO 11, MOSI 10
     PinLoraRst = 12;
     PinLoraDI0 = 14;
+    PinLoraGPIO = 13;
     PinLora_SS = 8;
     PinLora_MISO = 11;
     PinLora_MOSI = 10;
