@@ -1,6 +1,8 @@
 #ifndef __FILEOPS_H__
 #define __FILEOPS_H__
 
+//NOTE: Keys must not exceed 15 characters in length
+//https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/nvs_flash.html
 #define KEY_SETVIEW "setView"
 #define KEY_ACESSPOINT_PASSWORD "appw"
 #define KEY_BOARD "board"
@@ -41,17 +43,17 @@
 #define KEY_GsSrO "GsSrO"
 #define KEY_GsSsO "GsSsO"
 #define KEY_GSANEO "wdAnemo"
-#define KEY_WDANEOADSGAIN "wdAnemoAdsGain"
-#define KEY_WDANEOADSVDIVR1 "wdAnemoAdsVDivR1"
-#define KEY_WDANEOADSVDIVR2 "wdAnemoAdsVDivR2"
-#define KEY_WDANEOADSWSMINV "wdAnemoAdsWSpeedMinVoltage"
-#define KEY_WDANEOADSWSMAXV "wdAnemoAdsWSpeedMaxVoltage"
-#define KEY_WDANEOADSWDMINV "wdAnemoAdsWDirMinVoltage"
-#define KEY_WDANEOADSWDMAXV "wdAnemoAdsWDirMaxVoltage"
-#define KEY_WDANEOADSWSMINS "wdAnemoAdsWSpeedMinSpeed"
-#define KEY_WDANEOADSWSMAXS "wdAnemoAdsWSpeedMaxSpeed"
-#define KEY_WDANEOADSWDMIND "wdAnemoAdsWDirMinDir"
-#define KEY_WDANEOADSWDMAXD "wdAnemoAdsWDirMaxDir"
+#define KEY_WDANEOADSGAIN "wdAdsGain"
+#define KEY_WDANEOADSVDIVR1 "wdAdsVDivR1"
+#define KEY_WDANEOADSVDIVR2 "wdAdsVDivR2"
+#define KEY_WDANEOADSWSMINV "wdAdsWSpdMinV"
+#define KEY_WDANEOADSWSMAXV "wdAdsWSpdMaxV"
+#define KEY_WDANEOADSWDMINV "wdAdsWDirMinV"
+#define KEY_WDANEOADSWDMAXV "wdAdsWDirMaxV"
+#define KEY_WDANEOADSWSMINS "wdAdsWSpdMinSpd"
+#define KEY_WDANEOADSWSMAXS "wdAdsWSpdMaxSpd"
+#define KEY_WDANEOADSWDMIND "wdAdsWDirMinDir"
+#define KEY_WDANEOADSWDMAXD "wdAdsWDirMaxDir"
 #define KEY_BattMinPerc "MinBatPerc"
 #define KEY_BATOFFS "BATOFFS"
 #define KEY_restartBattPerc "restartBattPerc"
