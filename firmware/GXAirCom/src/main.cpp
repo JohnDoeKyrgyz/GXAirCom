@@ -2173,12 +2173,6 @@ void setup() {
     PinLora_MOSI = LORA_MOSI;
     PinLora_SCK = LORA_CLK;
     Mcu.begin(HELTEC_BOARD,SLOW_CLK_TPYE);
-//          PinLoraRst = 14;
-//          PinLoraDI0 = 26;
-//          PinLora_SS = 18;
-//          PinLora_MISO = 19;
-//          PinLora_MOSI = 27;
-//          PinLora_SCK = 5;
 
 //    PinExtPower = 45;
   break;
