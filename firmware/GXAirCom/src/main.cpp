@@ -1761,7 +1761,7 @@ void setup() {
     setting.boardType = T_BEAM_S3CORE;
   #endif
   #ifdef WIRELESS_STICK_V3
-    setting.boardType = HELTEC_WIRELESS_STICK_LITE_V3;
+    setting.boardType = HELTEC_WIRELESS_STICK_V3;
   #endif
   #ifdef WIRELESS_PAPER
     setting.boardType = HELTEC_WIRELESS_PAPER_V1_1;
@@ -2099,8 +2099,8 @@ void setup() {
     PinADCVoltage = 37;
     adcVoltageMultiplier =  3.69f;
     break;
-  case eBoard::HELTEC_WIRELESS_STICK:
-    log_i("Board=HELTEC Wireless Stick");
+  case eBoard::HELTEC_WIRELESS_STICK_V2:
+    log_i("Board=HELTEC Wireless Stick V2");
 #ifdef AIRMODULE
     PinBeaconLed = 25;
 #endif
@@ -2128,6 +2128,38 @@ void setup() {
 
     PinExtPower = 21;
     break;
+#ifdef WIRELESS_STICK_V3
+  case eBoard::HELTEC_WIRELESS_STICK_V3:
+    log_i("Board=HELTEC Wireless Stick V3");
+    #ifdef AIRMODULE
+      PinBeaconLed = 25;
+    #endif
+    sButton[0].PinButton = 0; //pin for program-button
+
+    //DIO_1 14, NSS 8, RESET 12, CLK 9, MISO 11, MOSI 10
+    PinLoraRst = 12;
+    PinLoraDI0 = 14;
+    PinLora_SS = 8;
+    PinLora_MISO = 11;
+    PinLora_MOSI = 10;
+    PinLora_SCK = 9;
+
+    PinOledRst = 16;
+    PinOledSDA = 4;
+    PinOledSCL = 15;
+    pI2cOne->begin(PinOledSDA, PinOledSCL);
+
+    PinBaroSDA = 41;
+    PinBaroSCL = 42;
+
+    PinWindDir = 36;
+    PinWindSpeed = 39;
+
+    PinOneWire = 23;
+
+    PinExtPower = 21;
+    break;
+#endif
 #ifdef WIRELESS_PAPER
   case eBoard::HELTEC_WIRELESS_PAPER_V1_1:
     log_i("Board=HELTEC Wireless Paper");
@@ -2147,7 +2179,7 @@ void setup() {
 //          PinLora_MOSI = 27;
 //          PinLora_SCK = 5;
 
-    PinExtPower = 45;
+//    PinExtPower = 45;
   break;
 #endif
   case eBoard::TTGO_TSIM_7000:
@@ -2274,7 +2306,9 @@ void setup() {
     pI2cOne->begin(PinBaroSDA, PinBaroSCL);
 
     PinWindDir = 2;
-    PinWindSpeed = 3;    
+    PinWindSpeed = 3;
+
+    PinOneWire = 4; //pin for one-Wire
 
     pinMode(35,OUTPUT);
     digitalWrite(35,LOW); //switch user-LED off
@@ -4222,6 +4256,7 @@ void taskStandard(void *pvParameters){
   uint8_t radioChip = RADIO_SX1276;
   if (setting.boardType == T_BEAM_SX1262
       || setting.boardType == T_BEAM_S3CORE
+      || setting.boardType == HELTEC_WIRELESS_STICK_V3
       || setting.boardType == HELTEC_WIRELESS_STICK_LITE_V3
       || setting.boardType == HELTEC_WIRELESS_PAPER_V1_1) radioChip = RADIO_SX1262;
 
