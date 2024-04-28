@@ -2167,6 +2167,7 @@ void setup() {
 
     PinLoraRst = RADIO_RESET;
     PinLoraDI0 = RADIO_DIO_1;
+    PinLoraGPIO = RADIO_BUSY;
     PinLora_SS = RADIO_NSS;
     PinLora_MISO = LORA_MISO;
     PinLora_MOSI = LORA_MOSI;
