@@ -5023,11 +5023,15 @@ void taskEInk(void *pvParameters){
     return;
   }
   Screen screen;
+#ifdef WIREWIRELESS_PAPER
+    screen.begin(eHT_ICMEN2R13EFC1,PinEink_Cs,PinEink_Dc,PinEink_Rst,PinEink_Busy,PinEink_Clk,PinEink_Din);
+#else
   if (setting.displayType == EINK2_9_V2){
-    screen.begin(1,PinEink_Cs,PinEink_Dc,PinEink_Rst,PinEink_Busy,PinEink_Clk,PinEink_Din); //display-type 1
+    screen.begin(eGxEPD2_290_T94_V2,PinEink_Cs,PinEink_Dc,PinEink_Rst,PinEink_Busy,PinEink_Clk,PinEink_Din); //display-type 1
   }else{
-    screen.begin(0,PinEink_Cs,PinEink_Dc,PinEink_Rst,PinEink_Busy,PinEink_Clk,PinEink_Din);
-  }  
+    screen.begin(eGxEPD2_290,PinEink_Cs,PinEink_Dc,PinEink_Rst,PinEink_Busy,PinEink_Clk,PinEink_Din);
+  }
+#endif
   while(1){
     screen.run();
     delay(10);

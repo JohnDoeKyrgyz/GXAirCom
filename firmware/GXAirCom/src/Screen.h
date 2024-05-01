@@ -38,10 +38,16 @@ extern struct statusData status;
 
 #define EINK_FULL_UPDATE 300000 //every 5min do a full-update because of ghosting
 
+enum DisplayType {
+    eGxEPD2_290_T94_V2 = 1,
+    eGxEPD2_290 = 0,
+    eHT_ICMEN2R13EFC1 = 3
+};
+
 class Screen {
 public:
   Screen(); //constructor
-  bool begin(uint8_t type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,int8_t clk, int8_t din);
+  bool begin(DisplayType type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,int8_t clk, int8_t din);
   void end();
   void run(); //has to be called cyclic
   void webUpdate();
@@ -76,7 +82,6 @@ private:
     bool wifi;
     uint8_t bluetooth;
   };
-  //GxEPD2_EPD *pDisplay;
 
 };
 

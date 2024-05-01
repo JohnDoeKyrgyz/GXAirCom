@@ -4,6 +4,8 @@
 
 #include "Screen.h"
 #include "tools.h"
+#include "HT_DisplayAdapter.h"
+#include "HT_lCMEN2R13EFC1.h"
 #include <icons.h>
 #include <qrcode.h>
 
@@ -14,10 +16,10 @@
 Screen::Screen(){
 }
 
-bool Screen::begin(uint8_t type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,int8_t clk, int8_t din){
+bool Screen::begin(DisplayType type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,int8_t clk, int8_t din){
   bInit = false;
   log_i("starting E-Ink type=%d;cs=%d,dc=%d,rst=%d,busy=%d,clk=%d,din=%d",type,cs,dc,rst,busy,clk,din);
-  if (type == 1){
+  if (type == eGxEPD2_290_T94_V2){
     //GxEPD2_BW<GxEPD2_290_T94, GxEPD2_290_T94::HEIGHT> *e_ink = new GxEPD2_BW<GxEPD2_290_T94, GxEPD2_290_T94::HEIGHT>(GxEPD2_290_T94(cs, dc, rst, busy));
     GxEPD2_BW<GxEPD2_290_T94_V2, GxEPD2_290_T94_V2::HEIGHT> *e_ink = new GxEPD2_BW<GxEPD2_290_T94_V2, GxEPD2_290_T94_V2::HEIGHT>(GxEPD2_290_T94_V2(cs, dc, rst, busy));
     e_ink->epd2.init(clk, din, 0, true, false); // define or replace SW_SCK, SW_MOSI)
@@ -27,7 +29,7 @@ bool Screen::begin(uint8_t type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,int8_
     //e_ink2.init(0); // needed to init upper level
     //pEInk = &e_ink2;
     log_i("display-type 2.9 V2");
-  }else{
+  }else if(type == eGxEPD2_290){
     GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> *e_ink = new GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT>(GxEPD2_290(cs, dc, rst, busy));
     e_ink->epd2.init(clk, din, 0, true, false); // define or replace SW_SCK, SW_MOSI)
     e_ink->init(0);
@@ -36,6 +38,11 @@ bool Screen::begin(uint8_t type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,int8_
     //e_ink.init(0); // needed to init upper level
     //pEInk = &e_ink;
     log_i("display-type 2.9 V1");
+  } else if(type == eHT_ICMEN2R13EFC1){
+    auto screen = new HT_ICMEN2R13EFC1(6, 5, 4, 7, 3, 2, -1, 6000000);
+    GxEPD2_BW<HT_DisplayAdapter<122, 250>, 250> *e_ink = new GxEPD2_BW<HT_DisplayAdapter<122, 250>, 250>(HT_DisplayAdapter<122, 250>(*screen));
+    pEInk = e_ink;
+    log_i("display-type HT_ICMEN2R13EFC1");
   }
   //e_ink3 = new GxEPD2_290_T94(EINK_CS, EINK_DC, EINK_RST, EINK_BUSY);
   //e_ink3 = new GxEPD2_BW<GxEPD2_290_T94, GxEPD2_290_T94::HEIGHT>(GxEPD2_290_T94(EINK_CS, EINK_DC, EINK_RST, EINK_BUSY));
