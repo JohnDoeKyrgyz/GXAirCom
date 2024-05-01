@@ -4,13 +4,13 @@
 #include <HT_Display.h>
 #include <GxEPD2_EPD.h>
 
-template <const uint16_t height, const uint16_t width>
+//template <const uint16_t height, const uint16_t width>
 class HT_DisplayAdapter : public GxEPD2_EPD {
   public:
     explicit HT_DisplayAdapter(ScreenDisplay &display);
 
-    static const uint16_t HEIGHT = height;
-    static const uint16_t WIDTH = width;
+    static const uint16_t HEIGHT = 122;
+    static const uint16_t WIDTH = 250;
     static const bool hasColor = false;
     static const bool hasPartialUpdate = true;
     static const bool hasFastPartialUpdate = true;

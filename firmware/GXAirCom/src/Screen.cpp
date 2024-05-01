@@ -1,7 +1,3 @@
-/*!
- * @file Screen.cpp
- */
-
 #include "Screen.h"
 #include "tools.h"
 
@@ -12,7 +8,6 @@
 
 #include <icons.h>
 #include <qrcode.h>
-
 
 //GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> e_ink(GxEPD2_290(EINK_CS, EINK_DC, EINK_RST, EINK_BUSY));
 //GxEPD2_BW<GxEPD2_290_T94, GxEPD2_290_T94::HEIGHT> e_ink2(GxEPD2_290_T94(EINK_CS, EINK_DC, EINK_RST, EINK_BUSY));
@@ -46,7 +41,7 @@ bool Screen::begin(DisplayType type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,i
 #ifdef WIRELESS_PAPER
   else if(type == eHT_ICMEN2R13EFC1){
     auto screen = new HT_ICMEN2R13EFC1(6, 5, 4, 7, 3, 2, -1, 6000000);
-    GxEPD2_BW<HT_DisplayAdapter<122, 250>, 250> *e_ink = new GxEPD2_BW<HT_DisplayAdapter<122, 250>, 250>(HT_DisplayAdapter<122, 250>(*screen));
+    GxEPD2_BW<HT_DisplayAdapter, 250> *e_ink = new GxEPD2_BW<HT_DisplayAdapter, 250>(HT_DisplayAdapter(*screen));
     pEInk = e_ink;
     log_i("display-type HT_ICMEN2R13EFC1");
   }
