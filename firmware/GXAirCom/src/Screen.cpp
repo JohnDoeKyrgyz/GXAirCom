@@ -4,8 +4,12 @@
 
 #include "Screen.h"
 #include "tools.h"
+
+#ifdef WIRELESS_PAPER
 #include "HT_DisplayAdapter.h"
 #include "HT_lCMEN2R13EFC1.h"
+#endif
+
 #include <icons.h>
 #include <qrcode.h>
 
@@ -38,12 +42,15 @@ bool Screen::begin(DisplayType type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,i
     //e_ink.init(0); // needed to init upper level
     //pEInk = &e_ink;
     log_i("display-type 2.9 V1");
-  } else if(type == eHT_ICMEN2R13EFC1){
+  }
+#ifdef WIRELESS_PAPER
+  else if(type == eHT_ICMEN2R13EFC1){
     auto screen = new HT_ICMEN2R13EFC1(6, 5, 4, 7, 3, 2, -1, 6000000);
     GxEPD2_BW<HT_DisplayAdapter<122, 250>, 250> *e_ink = new GxEPD2_BW<HT_DisplayAdapter<122, 250>, 250>(HT_DisplayAdapter<122, 250>(*screen));
     pEInk = e_ink;
     log_i("display-type HT_ICMEN2R13EFC1");
   }
+#endif
   //e_ink3 = new GxEPD2_290_T94(EINK_CS, EINK_DC, EINK_RST, EINK_BUSY);
   //e_ink3 = new GxEPD2_BW<GxEPD2_290_T94, GxEPD2_290_T94::HEIGHT>(GxEPD2_290_T94(EINK_CS, EINK_DC, EINK_RST, EINK_BUSY));
   return true;
