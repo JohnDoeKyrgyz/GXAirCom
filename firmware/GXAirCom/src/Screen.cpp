@@ -40,8 +40,7 @@ bool Screen::begin(DisplayType type,int8_t cs,int8_t dc,int8_t rst,int8_t busy,i
   }
 #ifdef WIRELESS_PAPER
   else if(type == eHT_ICMEN2R13EFC1){
-    auto screen = new HT_ICMEN2R13EFC1(6, 5, 4, 7, 3, 2, -1, 6000000);
-    GxEPD2_BW<HT_DisplayAdapter, 250> *e_ink = new GxEPD2_BW<HT_DisplayAdapter, 250>(HT_DisplayAdapter(*screen));
+    auto *e_ink = new GxEPD2_BW<HT_DisplayAdapter, HT_DisplayAdapter::HEIGHT>(HT_DisplayAdapter());
     pEInk = e_ink;
     log_i("display-type HT_ICMEN2R13EFC1");
   }

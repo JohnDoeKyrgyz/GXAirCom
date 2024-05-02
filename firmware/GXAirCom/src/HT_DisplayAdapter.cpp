@@ -1,14 +1,7 @@
 #include "HT_DisplayAdapter.h"
 
-
-HT_DisplayAdapter::HT_DisplayAdapter(ScreenDisplay &display) : GxEPD2_EPD(0, 0, 0, 0, 0, 0, 0, 0, GxEPD2::GDE0213B1,
-                                                                          false, false, false) {
-    this->_screen = &display;
-}
-
-
 void HT_DisplayAdapter::clearScreen(uint8_t value) {
-    this->_screen->clear();
+    this->_screen.clear();
 }
 
 

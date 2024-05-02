@@ -3,11 +3,15 @@
 #ifdef WIRELESS_PAPER
 #include <HT_Display.h>
 #include <GxEPD2_EPD.h>
+#include <HT_lCMEN2R13EFC1.h>
 
 //template <const uint16_t height, const uint16_t width>
 class HT_DisplayAdapter : public GxEPD2_EPD {
   public:
-    explicit HT_DisplayAdapter(ScreenDisplay &display);
+    HT_DisplayAdapter() : GxEPD2_EPD(0, 0, 0, 0, 0, 0, 0, 0, GxEPD2::GDE0213B1, false, false, false)
+        , _screen(6, 5, 4, 7, 3, 2, -1, 6000000) {
+
+    }
 
     static const uint16_t HEIGHT = 122;
     static const uint16_t WIDTH = 250;
@@ -65,7 +69,7 @@ class HT_DisplayAdapter : public GxEPD2_EPD {
     void hibernate(); // turns powerOff() and sets controller to deep sleep for minimum power use, ONLY if wakeable by RST (rst >= 0)
 
   private:
-    ScreenDisplay *_screen;
+    HT_ICMEN2R13EFC1 _screen;
 };
 
 #endif
