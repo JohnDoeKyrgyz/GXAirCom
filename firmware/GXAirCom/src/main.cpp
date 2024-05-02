@@ -2172,9 +2172,11 @@ void setup() {
     PinLora_MISO = LORA_MISO;
     PinLora_MOSI = LORA_MOSI;
     PinLora_SCK = LORA_CLK;
-    Mcu.begin(HELTEC_BOARD,SLOW_CLK_TPYE);
 
-//    PinExtPower = 45;
+    //If the flash is erased. This module will need to be re-licensed https://docs.heltec.org/general/how_to_use_license.html
+//    Mcu.begin(HELTEC_BOARD,SLOW_CLK_TPYE);
+
+    PinExtPower = 45;
   break;
 #endif
   case eBoard::TTGO_TSIM_7000:
@@ -2422,7 +2424,7 @@ xOutputMutex = xSemaphoreCreateMutex();
   //log_i("currHeap:%d,minHeap:%d", xPortGetFreeHeapSize(), xPortGetMinimumEverFreeHeapSize());
 
 #ifdef EINK
-  xTaskCreatePinnedToCore(taskEInk, "taskEInk", 6500, NULL, 8, &xHandleEInk, ARDUINO_RUNNING_CORE1); //background EInk
+//  xTaskCreatePinnedToCore(taskEInk, "taskEInk", 6500, NULL, 8, &xHandleEInk, ARDUINO_RUNNING_CORE1); //background EInk
 #endif
 #if defined(SSD1306) || defined(SH1106G)
 xTaskCreatePinnedToCore(taskOled, "taskOled", 6500, NULL, 8, &xHandleOled, ARDUINO_RUNNING_CORE1); //background Oled
@@ -5023,7 +5025,7 @@ void taskEInk(void *pvParameters){
     return;
   }
   Screen screen;
-#ifdef WIREWIRELESS_PAPER
+#ifdef WIRELESS_PAPER
     screen.begin(eHT_ICMEN2R13EFC1,PinEink_Cs,PinEink_Dc,PinEink_Rst,PinEink_Busy,PinEink_Clk,PinEink_Din);
 #else
   if (setting.displayType == EINK2_9_V2){
@@ -5184,7 +5186,7 @@ void taskBackGround(void *pvParameters){
 
     #ifdef GSMODULE  
     if (setting.Mode == GROUND_STATION){
-      if (status.bTimeOk == true){
+      if (status.bTimeOk){
         tm now;
         getLocalTime(&now,0);
         if (now.tm_mday != actDay && now.tm_hour > 0){
