@@ -1,7 +1,13 @@
 #include "fileOps.h"
 #include <Preferences.h>
 
-Preferences preferences;  
+#ifdef GSMODULE
+eMode DEFAULT_MODE = GROUND_STATION;
+#elif
+eMode DEFAULT_MODE = AIR_MODULE;
+#endif
+
+Preferences preferences;
 
 void load_configFile(SettingsData* pSetting){
   log_i("LOAD CONFIG FILE");
@@ -33,7 +39,7 @@ void load_configFile(SettingsData* pSetting){
   pSetting->UDPServerIP = preferences.getString(KEY_UDP_SERVER,"192.168.4.2"); //UDP-IP-Adress to match connected device
   pSetting->UDPSendPort = preferences.getUInt(KEY_UDP_PORT,10110); //Port of udp-server
   pSetting->outputMode = eOutput(preferences.getUChar(KEY_OutputMode,oBLE)); //output-mode default ble
-  pSetting->Mode = eMode(preferences.getUChar(KEY_Mode,AIR_MODULE));
+  pSetting->Mode = eMode(preferences.getUChar(KEY_Mode,DEFAULT_MODE));
   pSetting->fanetMode = eFnMode(preferences.getUChar(KEY_fntMode,FN_GROUNT_AIR_TRACKING));
   pSetting->fanetpin = preferences.getUInt(KEY_fntPin,0000);
   pSetting->bAutoupdate = preferences.getUChar(KEY_AUTOUPDATE,1); //auto-update"

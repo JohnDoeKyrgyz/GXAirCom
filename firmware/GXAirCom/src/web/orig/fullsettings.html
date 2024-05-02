@@ -87,7 +87,7 @@ function setVis(){
     document.getElementById("visAccTemp1").style.display='';
     document.getElementById("visAccTemp2").style.display='';
   }    
-  if (document.getElementById("mode").value === 1){ /*mode ground-station*/
+  if (document.getElementById("mode").value === "1"){ /*mode ground-station*/
     document.getElementById("VisOwnWs").style.display='';  /*enable Own weather-station  */
     if (wsMode & wsModeEn){
       document.getElementById("VisWD").style.display=''; /*set weather-data invisible*/
@@ -433,7 +433,7 @@ function openGeoidCalc(){
 }
 
 function checkValues(){
-  if (document.getElementById("mode").value === 1){ /*mode ground-station*/
+  if (document.getElementById("mode").value === "1"){ /*mode ground-station*/
     const gsname = document.getElementById("PilotName").value;
     if ((gsname.length < 3) || (gsname.length > 9) || (!onlyLetters(gsname))){
     window.alert("Error Ground Station name\r\nMinimum length for name is 3 characters\r\nMaximum length for name is 9 characters\r\nUse chars and numbers only (A-Z, a-z and 0-9)");
@@ -813,7 +813,6 @@ function parseJson(data){
   const myObj = JSON.parse(data);
   for (let key of Object.keys(myObj)) {
     console.log(key + " -> " + myObj[key]);
-    let isArray = Array.isArray(myObj[key]);
     if (Array.isArray(myObj[key])){
       let i = 0;
       for (let myValue of myObj[key]){
